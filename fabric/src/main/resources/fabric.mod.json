@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "structurecredits",
+  "version": "${version}",
+  "name": "Structure Credits",
+  "description": "Automatically displays the name and mod source of any structure upon entry, ensuring easy recognition and credit for mod creators.",
+  "authors": [
+    "ECarrascon"
+  ],
+  "contact": {
+    "homepage": "https://discord.gg/dYmyKcrkgN",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/structurecredits/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.eccarrascon.structurecredits.fabric.StructureCreditsFabric"
+    ]
+  },
+  "mixins": [
+    "structurecredits.mixins.json",
+    "structurecredits-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20.1",
+    "architectury": ">=9.1.12"
+  }
+}

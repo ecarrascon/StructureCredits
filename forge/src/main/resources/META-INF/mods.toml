@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "structurecredits"
+version = "${version}"
+displayName = "Structure Credits"
+authors = "ECarrascon"
+description = '''
+Automatically displays the name and mod source of any structure upon entry, ensuring easy recognition and credit for mod creators.
+'''
+#logoFile = ""
+
+[[dependencies.structurecredits]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.structurecredits]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.structurecredits]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.1.12,)"
+ordering = "AFTER"
+side = "BOTH"
