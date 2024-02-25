@@ -42,9 +42,11 @@ public class DetectStructure implements TickEvent.Player {
             actualStructure = null;
             tickCounter = 1;
         }
+
         if (tickCounter >= 1) {
-            tickCounter++;
-            if (tickCounter >= StructureCredits.CONFIG_VALUES.getCooldown()) {
+            if (tickCounter <= StructureCredits.CONFIG_VALUES.getCooldown() * 20) {
+                tickCounter++;
+            } else if (tickCounter >= StructureCredits.CONFIG_VALUES.getCooldown() * 20) {
                 tickCounter = 0;
             }
         }
@@ -69,7 +71,7 @@ public class DetectStructure implements TickEvent.Player {
                             .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
                             .collect(Collectors.joining(" "));
 
-                    if (!modName.equals("Minecraft")) {
+                    if (!fullLocation.startsWith("minecraft:") && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
                         player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
                     }
                     actualStructure = structureKey;

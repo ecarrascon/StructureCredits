@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.util.List;
 
 public class ConfigData {
-    private static final File CONFIG_DATA_FILE = new File(ExampleExpectPlatform.getConfigDirectory().toFile(), "structurecredits-config.json");
+    private static final File CONFIG_DATA_FILE = new File(GetConfigDir.getConfigDirectory().toFile(), "structurecredits-config.json");
 
     private int cooldown = 30;
 
+    private List<String> dontShow = List.of("minecraft:plains_village", "minecraft:desert_village");
 
     public ConfigData() {
     }
@@ -44,5 +46,8 @@ public class ConfigData {
         return cooldown;
     }
 
+    public List<String> getDontShow() {
+        return dontShow;
+    }
 
 }
