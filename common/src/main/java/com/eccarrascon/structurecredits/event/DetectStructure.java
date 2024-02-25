@@ -31,6 +31,9 @@ public class DetectStructure implements TickEvent.Player {
 
     @Override
     public void tick(net.minecraft.world.entity.player.Player player) {
+        if (player.level().isClientSide()) {
+            return;
+        }
         isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
     }
 
