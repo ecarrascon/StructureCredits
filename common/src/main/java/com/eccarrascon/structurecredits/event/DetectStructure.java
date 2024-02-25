@@ -1,5 +1,6 @@
 package com.eccarrascon.structurecredits.event;
 
+import com.eccarrascon.structurecredits.StructureCredits;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.LocationPredicate;
@@ -43,7 +44,7 @@ public class DetectStructure implements TickEvent.Player {
         }
         if (tickCounter >= 1) {
             tickCounter++;
-            if (tickCounter >= 300) {
+            if (tickCounter >= StructureCredits.CONFIG_VALUES.getCooldown()) {
                 tickCounter = 0;
             }
         }
