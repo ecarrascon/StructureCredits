@@ -1,5 +1,8 @@
 package com.eccarrascon.structurecredits.event;
 
+import com.catastrophe573.dimdungeons.dimension.DungeonData;
+import com.catastrophe573.dimdungeons.structure.DungeonRoom;
+import com.catastrophe573.dimdungeons.utils.DungeonUtils;
 import com.eccarrascon.structurecredits.StructureCredits;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.ChatFormatting;
@@ -20,9 +23,12 @@ import static dev.architectury.utils.GameInstance.getServer;
 public class DetectStructure implements TickEvent.Player {
 
     private ResourceKey<Structure> actualStructure;
+    private String actualDimensionalStructure;
 
     private Integer tickCounter = 0;
     private boolean isActive = true;
+
+    private boolean isInDontShowAll = false;
 
     public static ServerLevel getServerLevel(Level level) {
         if (level instanceof ServerLevel serverLevel)
@@ -47,7 +53,15 @@ public class DetectStructure implements TickEvent.Player {
         if (!isActive) {
             return;
         }
-        isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+        if (StructureCredits.DIMD_COMPAT && DungeonUtils.isDimensionDungeon(player.level())) {
+            DungeonRoom room = DungeonData.get(player.level()).getRoomAtPos(player.chunkPosition());
+            if (room != null && (actualDimensionalStructure == null || !actualDimensionalStructure.matches(room.structure))) {
+                actualDimensionalStructure = room.structure;
+                displayDimensionalDungeonMessage(player, actualDimensionalStructure);
+            }
+        } else {
+            isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+        }
     }
 
     public void isPlayerInAnyStructure(net.minecraft.world.entity.player.Player player, ServerLevel level, double x, double y, double z) {
@@ -94,10 +108,46 @@ public class DetectStructure implements TickEvent.Player {
                     .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
                     .collect(Collectors.joining(" "));
 
-            if (!fullLocation.startsWith("minecraft:") && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
+
+            isInDontShowAllList(fullLocation);
+
+            if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
                 player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
             }
             actualStructure = structureKey;
+        }
+    }
+
+    private void displayDimensionalDungeonMessage(net.minecraft.world.entity.player.Player player, String structureKey) {
+
+        String[] parts = structureKey.split(":");
+        if (parts.length == 2) {
+            String modName = parts[0];
+            String structureName = parts[1];
+
+            modName = Arrays.stream(modName.split("_"))
+                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                    .collect(Collectors.joining(" "));
+
+            structureName = Arrays.stream(structureName.split("_"))
+                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                    .collect(Collectors.joining(" "));
+
+            isInDontShowAllList(structureKey);
+
+            if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureKey)) {
+                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
+            }
+        }
+    }
+
+    private void isInDontShowAllList(String structureKey) {
+        isInDontShowAll = false;
+        for (String prefix : StructureCredits.CONFIG_VALUES.getDontShowAll()) {
+            if (structureKey.startsWith(prefix)) {
+                isInDontShowAll = true;
+                break;
+            }
         }
     }
 }

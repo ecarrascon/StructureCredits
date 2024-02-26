@@ -16,6 +16,9 @@ public class ConfigData {
 
     private List<String> dontShow = List.of("minecraft:plains_village", "minecraft:desert_village");
 
+    private List<String> dontShowAll = List.of("minecraft:", "dimdungeons:");
+
+
     public ConfigData() {
     }
 
@@ -50,4 +53,7 @@ public class ConfigData {
         return dontShow;
     }
 
+    public List<String> getDontShowAll() {
+        return dontShowAll;
+    }
 }
