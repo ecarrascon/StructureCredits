@@ -14,6 +14,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.CUSTOM_KEYMAPPING;
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
@@ -21,10 +22,11 @@ public class DetectStructure implements TickEvent.Player {
     private ResourceKey<Structure> actualStructure;
 
     private Integer tickCounter = 0;
+    private boolean isActive = true;
 
     public static ServerLevel getServerLevel(Level level) {
-        if (level instanceof ServerLevel)
-            return (ServerLevel) level;
+        if (level instanceof ServerLevel serverLevel)
+            return serverLevel;
         MinecraftServer server = getServer();
         return server == null ? null : server.getLevel(level.dimension());
     }
@@ -32,6 +34,17 @@ public class DetectStructure implements TickEvent.Player {
     @Override
     public void tick(net.minecraft.world.entity.player.Player player) {
         if (player.level().isClientSide()) {
+            while (CUSTOM_KEYMAPPING.consumeClick()) {
+                isActive = !isActive;
+                if (!isActive) {
+                    player.displayClientMessage(Component.translatable("text.structurecredits.deactivated").withStyle(ChatFormatting.GRAY), true);
+                } else {
+                    player.displayClientMessage(Component.translatable("text.structurecredits.activated").withStyle(ChatFormatting.GRAY), true);
+                }
+            }
+            return;
+        }
+        if (!isActive) {
             return;
         }
         isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
@@ -60,28 +73,31 @@ public class DetectStructure implements TickEvent.Player {
         for (ResourceKey<Structure> structureKey : ObtainAllStructuresEvent.allStructures) {
             LocationPredicate locationPredicate = LocationPredicate.inStructure(structureKey);
             if (locationPredicate.matches(level, x, y, z)) {
-                String fullLocation = structureKey.location().toString();
-                String[] parts = fullLocation.split(":");
-                if (parts.length == 2) {
-                    String modName = parts[0];
-                    String structureName = parts[1];
-
-                    modName = Arrays.stream(modName.split("_"))
-                            .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                            .collect(Collectors.joining(" "));
-
-                    structureName = Arrays.stream(structureName.split("_"))
-                            .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                            .collect(Collectors.joining(" "));
-
-                    if (!fullLocation.startsWith("minecraft:") && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
-                        player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
-                    }
-                    actualStructure = structureKey;
-                }
-
+                displayStructureMessage(player, structureKey);
             }
         }
 
+    }
+
+    private void displayStructureMessage(net.minecraft.world.entity.player.Player player, ResourceKey<Structure> structureKey) {
+        String fullLocation = structureKey.location().toString();
+        String[] parts = fullLocation.split(":");
+        if (parts.length == 2) {
+            String modName = parts[0];
+            String structureName = parts[1];
+
+            modName = Arrays.stream(modName.split("_"))
+                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                    .collect(Collectors.joining(" "));
+
+            structureName = Arrays.stream(structureName.split("_"))
+                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                    .collect(Collectors.joining(" "));
+
+            if (!fullLocation.startsWith("minecraft:") && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
+                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
+            }
+            actualStructure = structureKey;
+        }
     }
 }
