@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.eccarrascon.structurecredits.fabric.StructureCreditsFabric"
+    ],
+    "client": [
+      "com.eccarrascon.structurecredits.fabric.StructureCreditsClientFabric"
     ]
   },
   "mixins": [

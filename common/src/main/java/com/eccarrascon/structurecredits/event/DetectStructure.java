@@ -17,7 +17,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.CUSTOM_KEYMAPPING;
+import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.DEACTIVATE_MSG_KEYMAPPING;
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
@@ -40,7 +40,7 @@ public class DetectStructure implements TickEvent.Player {
     @Override
     public void tick(net.minecraft.world.entity.player.Player player) {
         if (player.level().isClientSide()) {
-            while (CUSTOM_KEYMAPPING.consumeClick()) {
+            while (DEACTIVATE_MSG_KEYMAPPING.consumeClick()) {
                 isActive = !isActive;
                 if (!isActive) {
                     player.displayClientMessage(Component.translatable("text.structurecredits.deactivated").withStyle(ChatFormatting.GRAY), true);
