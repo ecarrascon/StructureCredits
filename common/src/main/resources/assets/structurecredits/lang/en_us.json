@@ -1,5 +1,6 @@
 {
   "text.structurecredits.message": "§7Welcome to: %1$s §7- By: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Welcome to: %1$s §7- By: %2$s",
   "key.structurecredits.deactivate_key": "Deactivate Structure Message",
   "text.structurecredits.deactivated": "§7The structure message has been deactivated.",
   "text.structurecredits.activated": "§7The structure message has been activated.",

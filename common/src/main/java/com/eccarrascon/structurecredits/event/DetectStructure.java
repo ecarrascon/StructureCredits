@@ -136,7 +136,7 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(structureKey);
 
             if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureKey)) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
+                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName).withStyle(ChatFormatting.WHITE), true);
             }
         }
     }
