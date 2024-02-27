@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.DEACTIVATE_MSG_KEYMAPPING;
+import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.SHOW_AGAIN_MSG_KEYMAPPING;
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
@@ -25,7 +26,10 @@ public class DetectStructure implements TickEvent.Player {
     private ResourceKey<Structure> actualStructure;
     private String actualDimensionalStructure;
 
+    private boolean justDisplayed = false;
     private Integer tickCounter = 0;
+    private Integer tickCounterForDisplay = 0;
+    int namesWordCount = 0;
     private boolean isActive = true;
 
     private boolean isInDontShowAll = false;
@@ -48,6 +52,11 @@ public class DetectStructure implements TickEvent.Player {
                     player.displayClientMessage(Component.translatable("text.structurecredits.activated").withStyle(ChatFormatting.GRAY), true);
                 }
             }
+            while (SHOW_AGAIN_MSG_KEYMAPPING.consumeClick()) {
+                if (actualStructure != null) {
+                    displayStructureMessage(player, actualStructure);
+                }
+            }
             return;
         }
         if (!isActive) {
@@ -67,6 +76,17 @@ public class DetectStructure implements TickEvent.Player {
     public void isPlayerInAnyStructure(net.minecraft.world.entity.player.Player player, ServerLevel level, double x, double y, double z) {
 
         if (actualStructure != null && LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
+            if (justDisplayed) {
+                // This is a terrific way to do it, it makes the message display longer when the text is long. It has to be redone.
+                if ( (namesWordCount > 22 && tickCounterForDisplay <= 2 * 20) ||(namesWordCount > 15 && tickCounterForDisplay <= 20)) {
+                    tickCounterForDisplay++;
+                } else {
+                    displayStructureMessage(player, actualStructure);
+                    justDisplayed = false;
+                    tickCounterForDisplay = 0;
+                }
+
+            }
             return;
         } else if (actualStructure != null && !LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
             actualStructure = null;
@@ -88,6 +108,8 @@ public class DetectStructure implements TickEvent.Player {
             LocationPredicate locationPredicate = LocationPredicate.inStructure(structureKey);
             if (locationPredicate.matches(level, x, y, z)) {
                 displayStructureMessage(player, structureKey);
+                // This is a horrendus way to do it, it makes the message display longer when the text is long. It has to be redone.
+                justDisplayed = true;
             }
         }
 
@@ -108,6 +130,7 @@ public class DetectStructure implements TickEvent.Player {
                     .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
                     .collect(Collectors.joining(" "));
 
+            namesWordCount = modName.replace(" ", "").length() + structureName.replace(" ", "").length();
 
             isInDontShowAllList(fullLocation);
 
