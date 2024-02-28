@@ -3,6 +3,7 @@ package com.eccarrascon.structurecredits.event;
 import com.catastrophe573.dimdungeons.dimension.DungeonData;
 import com.catastrophe573.dimdungeons.structure.DungeonRoom;
 import com.catastrophe573.dimdungeons.utils.DungeonUtils;
+import com.eccarrascon.structurecredits.ConfigData;
 import com.eccarrascon.structurecredits.StructureCredits;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.ChatFormatting;
@@ -17,8 +18,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.DEACTIVATE_MSG_KEYMAPPING;
-import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.SHOW_AGAIN_MSG_KEYMAPPING;
+import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.*;
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
@@ -30,7 +30,6 @@ public class DetectStructure implements TickEvent.Player {
     private Integer tickCounter = 0;
     private Integer tickCounterForDisplay = 0;
     int namesWordCount = 0;
-    private boolean isActive = true;
 
     private boolean isInDontShowAll = false;
 
@@ -43,13 +42,18 @@ public class DetectStructure implements TickEvent.Player {
 
     @Override
     public void tick(net.minecraft.world.entity.player.Player player) {
+        boolean isActive = StructureCredits.CONFIG_VALUES.isActive();
         if (player.level().isClientSide()) {
             while (DEACTIVATE_MSG_KEYMAPPING.consumeClick()) {
                 isActive = !isActive;
                 if (!isActive) {
                     player.displayClientMessage(Component.translatable("text.structurecredits.deactivated").withStyle(ChatFormatting.GRAY), true);
+                    StructureCredits.CONFIG_VALUES.setActive(false);
+                    ConfigData.save(StructureCredits.CONFIG_VALUES);
                 } else {
                     player.displayClientMessage(Component.translatable("text.structurecredits.activated").withStyle(ChatFormatting.GRAY), true);
+                    StructureCredits.CONFIG_VALUES.setActive(true);
+                    ConfigData.save(StructureCredits.CONFIG_VALUES);
                 }
             }
             while (SHOW_AGAIN_MSG_KEYMAPPING.consumeClick()) {
@@ -57,6 +61,18 @@ public class DetectStructure implements TickEvent.Player {
                     displayStructureMessage(player, actualStructure);
                 }
             }
+            while (DONT_SHOW_MSG_KEYMAPPING.consumeClick()) {
+                if (actualStructure != null) {
+                    if (!StructureCredits.CONFIG_VALUES.getDontShow().contains(actualStructure.location().toString())) {
+                        player.displayClientMessage(Component.translatable("text.structurecredits.dont_show").withStyle(ChatFormatting.GRAY), true);
+                        StructureCredits.CONFIG_VALUES.getDontShow().add(actualStructure.location().toString());
+                        ConfigData.save(StructureCredits.CONFIG_VALUES);
+                    } else {
+                        player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show").withStyle(ChatFormatting.GRAY), true);
+                    }
+                }
+            }
+
             return;
         }
         if (!isActive) {

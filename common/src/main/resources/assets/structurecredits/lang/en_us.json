@@ -7,7 +7,8 @@
   "text.structurecredits.deactivated": "§7The structure message has been deactivated.",
   "text.structurecredits.activated": "§7The structure message has been activated.",
 
-  "key.structurecredits.show_again_key": "Show Again Structure Message"
-
-
+  "key.structurecredits.show_again_key": "Show Again Structure Message",
+  "key.structurecredits.dont_show_key": "Never Show Again This Structure",
+  "text.structurecredits.dont_show": "§7This structure will not display a message.",
+  "text.structurecredits.already_dont_show": "§7This structure is already set to not show a message."
 }

@@ -12,6 +12,8 @@ import java.util.List;
 public class ConfigData {
     private static final File CONFIG_DATA_FILE = new File(GetConfigDir.getConfigDirectory().toFile(), "structurecredits-config.json");
 
+    private boolean active = true;
+
     private int cooldown = 30;
 
     private List<String> dontShow = List.of("minecraft:plains_village", "minecraft:desert_village");
@@ -55,5 +57,21 @@ public class ConfigData {
 
     public List<String> getDontShowAll() {
         return dontShowAll;
+    }
+
+    public void setDontShow(List<String> dontShow) {
+        this.dontShow = dontShow;
+    }
+
+    public void setDontShowAll(List<String> dontShowAll) {
+        this.dontShowAll = dontShowAll;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
