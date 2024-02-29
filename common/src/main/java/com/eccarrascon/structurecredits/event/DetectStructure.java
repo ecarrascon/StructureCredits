@@ -6,7 +6,6 @@ import com.catastrophe573.dimdungeons.utils.DungeonUtils;
 import com.eccarrascon.structurecredits.ConfigData;
 import com.eccarrascon.structurecredits.StructureCredits;
 import dev.architectury.event.events.common.TickEvent;
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -29,6 +28,7 @@ public class DetectStructure implements TickEvent.Player {
     private boolean justDisplayed = false;
     private Integer tickCounter = 0;
     private Integer tickCounterForDisplay = 0;
+    private boolean showAgain = false;
     int namesWordCount = 0;
 
     private boolean isInDontShowAll = false;
@@ -47,28 +47,29 @@ public class DetectStructure implements TickEvent.Player {
             while (DEACTIVATE_MSG_KEYMAPPING.consumeClick()) {
                 isActive = !isActive;
                 if (!isActive) {
-                    player.displayClientMessage(Component.translatable("text.structurecredits.deactivated").withStyle(ChatFormatting.GRAY), true);
+                    player.displayClientMessage(Component.translatable("text.structurecredits.deactivated"), true);
                     StructureCredits.CONFIG_VALUES.setActive(false);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
                 } else {
-                    player.displayClientMessage(Component.translatable("text.structurecredits.activated").withStyle(ChatFormatting.GRAY), true);
+                    player.displayClientMessage(Component.translatable("text.structurecredits.activated"), true);
                     StructureCredits.CONFIG_VALUES.setActive(true);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
                 }
             }
             while (SHOW_AGAIN_MSG_KEYMAPPING.consumeClick()) {
                 if (actualStructure != null) {
+                    showAgain = true;
                     displayStructureMessage(player, actualStructure);
                 }
             }
             while (DONT_SHOW_MSG_KEYMAPPING.consumeClick()) {
                 if (actualStructure != null) {
                     if (!StructureCredits.CONFIG_VALUES.getDontShow().contains(actualStructure.location().toString())) {
-                        player.displayClientMessage(Component.translatable("text.structurecredits.dont_show").withStyle(ChatFormatting.GRAY), true);
+                        player.displayClientMessage(Component.translatable("text.structurecredits.dont_show"), true);
                         StructureCredits.CONFIG_VALUES.getDontShow().add(actualStructure.location().toString());
                         ConfigData.save(StructureCredits.CONFIG_VALUES);
                     } else {
-                        player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show").withStyle(ChatFormatting.GRAY), true);
+                        player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show"), true);
                     }
                 }
             }
@@ -150,8 +151,13 @@ public class DetectStructure implements TickEvent.Player {
 
             isInDontShowAllList(fullLocation);
 
-            if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName).withStyle(ChatFormatting.WHITE), true);
+            if (showAgain || (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation))) {
+                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName), true);
+                if (StructureCredits.CONFIG_VALUES.isOnlyOneTime() && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
+                    StructureCredits.CONFIG_VALUES.getDontShow().add(fullLocation);
+                    ConfigData.save(StructureCredits.CONFIG_VALUES);
+                }
+                showAgain = false;
             }
             actualStructure = structureKey;
         }
@@ -175,7 +181,11 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(structureKey);
 
             if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureKey)) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName).withStyle(ChatFormatting.WHITE), true);
+                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName), true);
+                if (StructureCredits.CONFIG_VALUES.isOnlyOneTime()) {
+                    StructureCredits.CONFIG_VALUES.getDontShow().add(structureKey);
+                    ConfigData.save(StructureCredits.CONFIG_VALUES);
+                }
             }
         }
     }

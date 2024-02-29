@@ -13,12 +13,13 @@ public class ConfigData {
     private static final File CONFIG_DATA_FILE = new File(GetConfigDir.getConfigDirectory().toFile(), "structurecredits-config.json");
 
     private boolean active = true;
-
+    private boolean showOnlyOneTime = false;
     private int cooldown = 30;
+
+    private List<String> dontShowAll = List.of("minecraft:", "dimdungeons:");
 
     private List<String> dontShow = List.of("minecraft:plains_village", "minecraft:desert_village");
 
-    private List<String> dontShowAll = List.of("minecraft:", "dimdungeons:");
 
 
     public ConfigData() {
@@ -73,5 +74,9 @@ public class ConfigData {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isOnlyOneTime() {
+        return showOnlyOneTime;
     }
 }
