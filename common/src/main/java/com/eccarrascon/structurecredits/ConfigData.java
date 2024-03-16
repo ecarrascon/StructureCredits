@@ -16,6 +16,8 @@ public class ConfigData {
     private boolean showOnlyOneTime = false;
     private int cooldown = 30;
 
+    private boolean chatMessage = false;
+
     private List<String> dontShowAll = List.of("minecraft:", "dimdungeons:");
 
     private List<String> dontShow = List.of("minecraft:plains_village", "minecraft:desert_village");
@@ -78,5 +80,9 @@ public class ConfigData {
 
     public boolean isOnlyOneTime() {
         return showOnlyOneTime;
+    }
+
+    public boolean isChatMessage() {
+        return chatMessage;
     }
 }

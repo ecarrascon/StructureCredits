@@ -93,7 +93,7 @@ public class DetectStructure implements TickEvent.Player {
     public void isPlayerInAnyStructure(net.minecraft.world.entity.player.Player player, ServerLevel level, double x, double y, double z) {
 
         if (actualStructure != null && LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
-            if (justDisplayed) {
+            if (!StructureCredits.CONFIG_VALUES.isChatMessage() && justDisplayed) {
                 // This is a terrific way to do it, it makes the message display longer when the text is long. It has to be redone.
                 if ( (namesWordCount > 22 && tickCounterForDisplay <= 2 * 20) ||(namesWordCount > 15 && tickCounterForDisplay <= 20)) {
                     tickCounterForDisplay++;
@@ -152,7 +152,7 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(fullLocation);
 
             if (showAgain || (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation))) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName), true);
+                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
                 if (StructureCredits.CONFIG_VALUES.isOnlyOneTime() && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
                     StructureCredits.CONFIG_VALUES.getDontShow().add(fullLocation);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
@@ -181,7 +181,7 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(structureKey);
 
             if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureKey)) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName), true);
+                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
                 if (StructureCredits.CONFIG_VALUES.isOnlyOneTime()) {
                     StructureCredits.CONFIG_VALUES.getDontShow().add(structureKey);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
