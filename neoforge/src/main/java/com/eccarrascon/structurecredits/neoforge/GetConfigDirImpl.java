@@ -1,6 +1,8 @@
-package com.eccarrascon.structurecredits.forge;
+package com.eccarrascon.structurecredits.neoforge;
 
-import net.minecraftforge.fml.loading.FMLPaths;
+
+
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
 

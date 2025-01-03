@@ -5,8 +5,11 @@ import com.catastrophe573.dimdungeons.structure.DungeonRoom;
 import com.catastrophe573.dimdungeons.utils.DungeonUtils;
 import com.eccarrascon.structurecredits.ConfigData;
 import com.eccarrascon.structurecredits.StructureCredits;
+import com.eccarrascon.structurecredits.registry.KeyMapRegistry;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -22,14 +25,14 @@ import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
 
-    private ResourceKey<Structure> actualStructure;
+    private Holder<Structure> actualStructure;
     private String actualDimensionalStructure;
 
     private boolean justDisplayed = false;
-    private Integer tickCounter = 0;
-    private Integer tickCounterForDisplay = 0;
+    private int tickCounter = 0;
+    private int tickCounterForDisplay = 0;
     private boolean showAgain = false;
-    int namesWordCount = 0;
+    private int namesWordCount = 0;
 
     private boolean isInDontShowAll = false;
 
@@ -44,139 +47,137 @@ public class DetectStructure implements TickEvent.Player {
     public void tick(net.minecraft.world.entity.player.Player player) {
         boolean isActive = StructureCredits.CONFIG_VALUES.isActive();
         if (player.level().isClientSide()) {
-            while (DEACTIVATE_MSG_KEYMAPPING.consumeClick()) {
-                isActive = !isActive;
-                if (!isActive) {
-                    player.displayClientMessage(Component.translatable("text.structurecredits.deactivated"), true);
-                    StructureCredits.CONFIG_VALUES.setActive(false);
-                    ConfigData.save(StructureCredits.CONFIG_VALUES);
-                } else {
-                    player.displayClientMessage(Component.translatable("text.structurecredits.activated"), true);
-                    StructureCredits.CONFIG_VALUES.setActive(true);
-                    ConfigData.save(StructureCredits.CONFIG_VALUES);
-                }
-            }
-            while (SHOW_AGAIN_MSG_KEYMAPPING.consumeClick()) {
-                if (actualStructure != null) {
-                    showAgain = true;
-                    displayStructureMessage(player, actualStructure);
-                }
-            }
-            while (DONT_SHOW_MSG_KEYMAPPING.consumeClick()) {
-                if (actualStructure != null) {
-                    if (!StructureCredits.CONFIG_VALUES.getDontShow().contains(actualStructure.location().toString())) {
-                        player.displayClientMessage(Component.translatable("text.structurecredits.dont_show"), true);
-                        StructureCredits.CONFIG_VALUES.getDontShow().add(actualStructure.location().toString());
-                        ConfigData.save(StructureCredits.CONFIG_VALUES);
-                    } else {
-                        player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show"), true);
-                    }
-                }
-            }
-
+            handleClientSideActions(player, isActive);
             return;
         }
         if (!isActive) {
             return;
         }
         if (StructureCredits.DIMD_COMPAT && DungeonUtils.isDimensionDungeon(player.level())) {
-            DungeonRoom room = DungeonData.get(player.level()).getRoomAtPos(player.chunkPosition());
-            if (room != null && (actualDimensionalStructure == null || !actualDimensionalStructure.matches(room.structure))) {
-                actualDimensionalStructure = room.structure;
-                displayDimensionalDungeonMessage(player, actualDimensionalStructure);
-            }
+            handleDimensionalDungeonDetection(player);
         } else {
             isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
         }
     }
 
+    private void handleClientSideActions(net.minecraft.world.entity.player.Player player, boolean isActive) {
+        KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance(); // Access the singleton instance
+
+        while (keyMapRegistry.getDeactivateMsgKeyMapping().consumeClick()) {
+            toggleActiveState(player, isActive);
+        }
+        while (keyMapRegistry.getShowAgainMsgKeyMapping().consumeClick()) {
+            if (actualStructure != null) {
+                showAgain = true;
+                displayStructureMessage(player, actualStructure);
+            }
+        }
+        while (keyMapRegistry.getDontShowMsgKeyMapping().consumeClick()) {
+            if (actualStructure != null) {
+                manageDontShowList(player, actualStructure);
+            }
+        }
+    }
+
+    private void toggleActiveState(net.minecraft.world.entity.player.Player player, boolean isActive) {
+        isActive = !isActive;
+        String messageKey = isActive ? "text.structurecredits.activated" : "text.structurecredits.deactivated";
+        player.displayClientMessage(Component.translatable(messageKey), true);
+        StructureCredits.CONFIG_VALUES.setActive(isActive);
+        ConfigData.save(StructureCredits.CONFIG_VALUES);
+    }
+
+    private void manageDontShowList(net.minecraft.world.entity.player.Player player, Holder<Structure> structure) {
+        String structureLocation = structure.unwrapKey().map(ResourceKey::location).orElseThrow().toString();
+        if (!StructureCredits.CONFIG_VALUES.getDontShow().contains(structureLocation)) {
+            player.displayClientMessage(Component.translatable("text.structurecredits.dont_show"), true);
+            StructureCredits.CONFIG_VALUES.getDontShow().add(structureLocation);
+            ConfigData.save(StructureCredits.CONFIG_VALUES);
+        } else {
+            player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show"), true);
+        }
+    }
+
+    private void handleDimensionalDungeonDetection(net.minecraft.world.entity.player.Player player) {
+        DungeonRoom room = DungeonData.get(player.level()).getRoomAtPos(player.chunkPosition());
+        if (room != null && (actualDimensionalStructure == null || !actualDimensionalStructure.equals(room.structure))) {
+            actualDimensionalStructure = room.structure;
+            displayDimensionalDungeonMessage(player, actualDimensionalStructure);
+        }
+    }
+
     public void isPlayerInAnyStructure(net.minecraft.world.entity.player.Player player, ServerLevel level, double x, double y, double z) {
-
-        if (actualStructure != null && LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
+        if (actualStructure != null && LocationPredicate.Builder.inStructure(actualStructure).build().matches(level, x, y, z)) {
             if (!StructureCredits.CONFIG_VALUES.isChatMessage() && justDisplayed) {
-                // This is a terrific way to do it, it makes the message display longer when the text is long. It has to be redone.
-                if ( (namesWordCount > 22 && tickCounterForDisplay <= 2 * 20) ||(namesWordCount > 15 && tickCounterForDisplay <= 20)) {
-                    tickCounterForDisplay++;
-                } else {
-                    displayStructureMessage(player, actualStructure);
-                    justDisplayed = false;
-                    tickCounterForDisplay = 0;
-                }
-
+                manageMessageDisplayCooldown();
             }
             return;
-        } else if (actualStructure != null && !LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
-            actualStructure = null;
-            tickCounter = 1;
         }
 
-        if (tickCounter >= 1) {
-            if (tickCounter <= StructureCredits.CONFIG_VALUES.getCooldown() * 20) {
-                tickCounter++;
-            } else if (tickCounter >= StructureCredits.CONFIG_VALUES.getCooldown() * 20) {
-                tickCounter = 0;
-            }
+        actualStructure = null;
+        tickCounter = (tickCounter > 0) ? tickCounter + 1 : 0;
+
+        if (tickCounter > StructureCredits.CONFIG_VALUES.getCooldown() * 20) {
+            tickCounter = 0;
         }
 
         if (tickCounter != 0) {
             return;
         }
+
         for (ResourceKey<Structure> structureKey : ObtainAllStructuresEvent.allStructures) {
-            LocationPredicate locationPredicate = LocationPredicate.inStructure(structureKey);
-            if (locationPredicate.matches(level, x, y, z)) {
-                displayStructureMessage(player, structureKey);
-                // This is a horrendus way to do it, it makes the message display longer when the text is long. It has to be redone.
+            Holder.Reference<Structure> structureHolder = level.registryAccess().registryOrThrow(Registries.STRUCTURE).getHolderOrThrow(structureKey);
+            if (LocationPredicate.Builder.inStructure(structureHolder).build().matches(level, x, y, z)) {
+                displayStructureMessage(player, structureHolder);
                 justDisplayed = true;
+                break;
             }
         }
-
     }
 
-    private void displayStructureMessage(net.minecraft.world.entity.player.Player player, ResourceKey<Structure> structureKey) {
-        String fullLocation = structureKey.location().toString();
-        String[] parts = fullLocation.split(":");
+    private void manageMessageDisplayCooldown() {
+        if ((namesWordCount > 22 && tickCounterForDisplay <= 2 * 20) || (namesWordCount > 15 && tickCounterForDisplay <= 20)) {
+            tickCounterForDisplay++;
+        } else {
+            tickCounterForDisplay = 0;
+            justDisplayed = false;
+        }
+    }
+
+    private void displayStructureMessage(net.minecraft.world.entity.player.Player player, Holder<Structure> structure) {
+        String structureLocation = structure.unwrapKey().map(ResourceKey::location).orElseThrow().toString();
+        String[] parts = structureLocation.split(":");
         if (parts.length == 2) {
-            String modName = parts[0];
-            String structureName = parts[1];
+            String modName = formatName(parts[0]);
+            String structureName = formatName(parts[1]);
 
-            modName = Arrays.stream(modName.split("_"))
-                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                    .collect(Collectors.joining(" "));
+            namesWordCount = modName.length() + structureName.length();
 
-            structureName = Arrays.stream(structureName.split("_"))
-                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                    .collect(Collectors.joining(" "));
+            isInDontShowAllList(structureLocation);
 
-            namesWordCount = modName.replace(" ", "").length() + structureName.replace(" ", "").length();
-
-            isInDontShowAllList(fullLocation);
-
-            if (showAgain || (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation))) {
+            if (showAgain || (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureLocation))) {
                 player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
-                if (StructureCredits.CONFIG_VALUES.isOnlyOneTime() && !StructureCredits.CONFIG_VALUES.getDontShow().contains(fullLocation)) {
-                    StructureCredits.CONFIG_VALUES.getDontShow().add(fullLocation);
+                if (StructureCredits.CONFIG_VALUES.isOnlyOneTime() && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureLocation)) {
+                    StructureCredits.CONFIG_VALUES.getDontShow().add(structureLocation);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
                 }
                 showAgain = false;
             }
-            actualStructure = structureKey;
+            actualStructure = structure;
         }
     }
 
-    private void displayDimensionalDungeonMessage(net.minecraft.world.entity.player.Player player, String structureKey) {
+    private String formatName(String name) {
+        return Arrays.stream(name.split("_"))
+                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                .collect(Collectors.joining(" "));
+    }
 
+    private void displayDimensionalDungeonMessage(net.minecraft.world.entity.player.Player player, String structureKey) {
         String[] parts = structureKey.split(":");
         if (parts.length == 2) {
-            String modName = parts[0];
-            String structureName = parts[1];
-
-            modName = Arrays.stream(modName.split("_"))
-                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                    .collect(Collectors.joining(" "));
-
-            structureName = Arrays.stream(structureName.split("_"))
-                    .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                    .collect(Collectors.joining(" "));
+            String modName = formatName(parts[0]);
+            String structureName = formatName(parts[1]);
 
             isInDontShowAllList(structureKey);
 
@@ -191,12 +192,6 @@ public class DetectStructure implements TickEvent.Player {
     }
 
     private void isInDontShowAllList(String structureKey) {
-        isInDontShowAll = false;
-        for (String prefix : StructureCredits.CONFIG_VALUES.getDontShowAll()) {
-            if (structureKey.startsWith(prefix)) {
-                isInDontShowAll = true;
-                break;
-            }
-        }
+        isInDontShowAll = StructureCredits.CONFIG_VALUES.getDontShowAll().stream().anyMatch(structureKey::startsWith);
     }
 }
