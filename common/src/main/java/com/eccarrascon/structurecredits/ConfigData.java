@@ -13,7 +13,7 @@ public class ConfigData {
     private static final File CONFIG_DATA_FILE = new File(GetConfigDir.getConfigDirectory().toFile(), "structurecredits-config.json");
 
     private boolean active = true;
-    private boolean showOnlyOneTime = false;
+    private boolean showOnlyOneTime = true;
     private int cooldown = 30;
 
     private boolean chatMessage = false;
