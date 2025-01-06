@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigData {
     private static final File CONFIG_DATA_FILE = new File(GetConfigDir.getConfigDirectory().toFile(), "structurecredits-config.json");
@@ -17,6 +19,13 @@ public class ConfigData {
     private int cooldown = 30;
 
     private boolean chatMessage = false;
+
+    private boolean showCreator = true;
+
+    private Map<String, String> customStructureName = new HashMap<>() {{
+        put("minecraft:swamp_hut", "a_cat:cat_hut");
+    }};
+
 
     private List<String> dontShowAll = List.of("minecraft:", "dimdungeons:");
 
@@ -48,6 +57,14 @@ public class ConfigData {
         } catch (IOException e) {
             StructureCredits.LOGGER.error("Error while trying to save configuration file. Details: {}", e.getMessage(), e);
         }
+    }
+
+    public Map<String, String> getCustomStructureName() {
+        return customStructureName;
+    }
+
+    public void setCustomStructureName(Map<String, String> customStructureName) {
+        this.customStructureName = customStructureName;
     }
 
     public int getCooldown() {
@@ -84,5 +101,9 @@ public class ConfigData {
 
     public boolean isChatMessage() {
         return chatMessage;
+    }
+
+    public boolean isShowCreator() {
+        return showCreator;
     }
 }

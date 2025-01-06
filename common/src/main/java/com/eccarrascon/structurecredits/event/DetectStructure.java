@@ -20,7 +20,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.eccarrascon.structurecredits.registry.KeyMapRegistry.*;
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
@@ -146,7 +145,9 @@ public class DetectStructure implements TickEvent.Player {
 
     private void displayStructureMessage(net.minecraft.world.entity.player.Player player, Holder<Structure> structure) {
         String structureLocation = structure.unwrapKey().map(ResourceKey::location).orElseThrow().toString();
-        String[] parts = structureLocation.split(":");
+        String customName = StructureCredits.CONFIG_VALUES.getCustomStructureName().getOrDefault(structureLocation, structureLocation);
+
+        String[] parts = customName.split(":");
         if (parts.length == 2) {
             String modName = formatName(parts[0]);
             String structureName = formatName(parts[1]);
@@ -156,7 +157,11 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(structureLocation);
 
             if (showAgain || (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureLocation))) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message", structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
+                String messageKey = StructureCredits.CONFIG_VALUES.isShowCreator() ?
+                        "text.structurecredits.message" :
+                        "text.structurecredits.message_no_creator";
+
+                player.displayClientMessage(Component.translatable(messageKey, structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
                 if (StructureCredits.CONFIG_VALUES.isOnlyOneTime() && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureLocation)) {
                     StructureCredits.CONFIG_VALUES.getDontShow().add(structureLocation);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
@@ -174,7 +179,8 @@ public class DetectStructure implements TickEvent.Player {
     }
 
     private void displayDimensionalDungeonMessage(net.minecraft.world.entity.player.Player player, String structureKey) {
-        String[] parts = structureKey.split(":");
+        String customName = StructureCredits.CONFIG_VALUES.getCustomStructureName().getOrDefault(structureKey, structureKey);
+        String[] parts = customName.split(":");
         if (parts.length == 2) {
             String modName = formatName(parts[0]);
             String structureName = formatName(parts[1]);
@@ -182,7 +188,11 @@ public class DetectStructure implements TickEvent.Player {
             isInDontShowAllList(structureKey);
 
             if (!isInDontShowAll && !StructureCredits.CONFIG_VALUES.getDontShow().contains(structureKey)) {
-                player.displayClientMessage(Component.translatable("text.structurecredits.message_dimensional_dungeon", structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
+                String messageKey = StructureCredits.CONFIG_VALUES.isShowCreator() ?
+                        "text.structurecredits.message_dimensional_dungeon" :
+                        "text.structurecredits.message_no_creator";
+
+                player.displayClientMessage(Component.translatable(messageKey, structureName, modName), !StructureCredits.CONFIG_VALUES.isChatMessage());
                 if (StructureCredits.CONFIG_VALUES.isOnlyOneTime()) {
                     StructureCredits.CONFIG_VALUES.getDontShow().add(structureKey);
                     ConfigData.save(StructureCredits.CONFIG_VALUES);
