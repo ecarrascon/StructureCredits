@@ -8,24 +8,21 @@ import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-
-
 @Environment(EnvType.CLIENT)
 public class StructureCreditsClient {
 
     public static ConfigData CONFIG_VALUES = new ConfigData();
 
-
     public static void onInitializeClient() {
-        StructureCreditsNet.initializeClient();
         CONFIG_VALUES = ConfigData.init();
+        StructureCreditsNet.initializeClient();
 
         KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();
 
         KeyMappingRegistry.register(keyMapRegistry.getDeactivateMsgKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getShowAgainMsgKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getDontShowMsgKeyMapping());
-        ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
 
+        ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
     }
 }

@@ -8,12 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DisplayNameClient implements ClientTickEvent.Client {
-    private static final Set<String> displayedStructures = new HashSet<>();
     private static String lastStructureMessage;
 
     @Override
@@ -34,7 +31,6 @@ public class DisplayNameClient implements ClientTickEvent.Client {
     }
 
     public static void updateStructureName(String structureName) {
-        if (!displayedStructures.contains(structureName)) {
             ConfigData config = StructureCreditsClient.CONFIG_VALUES;
 
             String customName = config.getCustomStructureName().getOrDefault(structureName, structureName);
@@ -45,19 +41,20 @@ public class DisplayNameClient implements ClientTickEvent.Client {
 
                 if (!config.getDontShowAll().stream().anyMatch(structureName::startsWith) && !config.getDontShow().contains(structureName)) {
                     String messageKey = config.isShowCreator() ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
-                    Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey, structureNameFormatted, modName), !config.isChatMessage());
+                    Minecraft.getInstance().player.displayClientMessage(
+                            Component.translatable(messageKey, structureNameFormatted, modName),
+                            !config.isChatMessage()
+                    );
 
                     lastStructureMessage = Component.translatable(messageKey, structureNameFormatted, modName).getString();
 
-                    if (config.isOnlyOneTime()) {
+                    if (config.isOnlyOneTime() && !config.getDontShow().contains(structureName)) {
                         config.getDontShow().add(structureName);
                         ConfigData.save(config);
                     }
 
-                    displayedStructures.add(structureName);
                 }
             }
-        }
     }
 
     private static String formatName(String name) {
@@ -87,7 +84,7 @@ public class DisplayNameClient implements ClientTickEvent.Client {
         if (lastStructureMessage != null) {
             ConfigData config = StructureCreditsClient.CONFIG_VALUES;
 
-            String structureName = lastStructureMessage.split(",")[1].trim(); // Extract structure name (adjust logic if needed)
+            String structureName = lastStructureMessage.split(",")[1].trim();
             if (!config.getDontShow().contains(structureName)) {
                 config.getDontShow().add(structureName);
                 ConfigData.save(config);
