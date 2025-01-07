@@ -5,28 +5,61 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 
+import java.util.Set;
+
 @Environment(EnvType.CLIENT)
 public class KeyMapRegistry {
-    public static final KeyMapping DEACTIVATE_MSG_KEYMAPPING = new KeyMapping(
-            "key.structurecredits.deactivate_key", // The translation key of the name shown in the Controls screen
-            InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-            -1, // The default keycode
-            "category.structurecredits.keys" // The category translation key used to categorize in the Controls screen
-    );
+    private static KeyMapRegistry instance;
 
-    public static final KeyMapping SHOW_AGAIN_MSG_KEYMAPPING = new KeyMapping(
-            "key.structurecredits.show_again_key", // The translation key of the name shown in the Controls screen
-            InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-            -1, // The default keycode
-            "category.structurecredits.keys" // The category translation key used to categorize in the Controls screen
-    );
+    private final KeyMapping deactivateMsgKeyMapping;
+    private final KeyMapping showAgainMsgKeyMapping;
+    private final KeyMapping dontShowMsgKeyMapping;
 
-    public static final KeyMapping DONT_SHOW_MSG_KEYMAPPING = new KeyMapping(
-            "key.structurecredits.dont_show_key", // The translation key of the name shown in the Controls screen
-            InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-            -1, // The default keycode
-            "category.structurecredits.keys" // The category translation key used to categorize in the Controls screen
-    );
+    private static final String CATEGORY_KEY = "category.structurecredits.keys";
 
+    private KeyMapRegistry() {
+        deactivateMsgKeyMapping = new KeyMapping(
+                "key.structurecredits.deactivate_key",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
 
+        showAgainMsgKeyMapping = new KeyMapping(
+                "key.structurecredits.show_again_key",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        dontShowMsgKeyMapping = new KeyMapping(
+                "key.structurecredits.dont_show_key",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+    }
+
+    public static KeyMapRegistry getInstance() {
+        if (instance == null) {
+            instance = new KeyMapRegistry();
+        }
+        return instance;
+    }
+
+    public KeyMapping getDeactivateMsgKeyMapping() {
+        return deactivateMsgKeyMapping;
+    }
+
+    public KeyMapping getShowAgainMsgKeyMapping() {
+        return showAgainMsgKeyMapping;
+    }
+
+    public KeyMapping getDontShowMsgKeyMapping() {
+        return dontShowMsgKeyMapping;
+    }
+
+    public Set<KeyMapping> getKeys() {
+        return Set.of(deactivateMsgKeyMapping, showAgainMsgKeyMapping, dontShowMsgKeyMapping);
+    }
 }
