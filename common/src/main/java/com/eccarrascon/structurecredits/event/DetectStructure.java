@@ -18,6 +18,7 @@ import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
 
+    private ResourceKey<Structure> actualStructure;
     private String actualDimensionalStructure;
 
     public static ServerLevel getServerLevel(Level level) {
@@ -47,11 +48,16 @@ public class DetectStructure implements TickEvent.Player {
     }
 
     public void isPlayerInAnyStructure(net.minecraft.world.entity.player.Player player, ServerLevel level, double x, double y, double z) {
+        if (actualStructure != null && LocationPredicate.inStructure(actualStructure).matches(level, x, y, z)) {
+            return;
+        }
 
+        actualStructure = null;
 
 
         for (ResourceKey<Structure> structureKey : ObtainAllStructuresEvent.allStructures) {
             if (LocationPredicate.inStructure(structureKey).matches(level, x, y, z)) {
+                actualStructure = structureKey;
                 new StructureNameSyncMessage(structureKey.location().toString()).sendTo((ServerPlayer) player);
                 break;
             }

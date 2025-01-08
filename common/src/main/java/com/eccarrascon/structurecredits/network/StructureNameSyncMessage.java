@@ -14,7 +14,7 @@ public class StructureNameSyncMessage extends BaseS2CMessage {
     }
 
     public StructureNameSyncMessage(FriendlyByteBuf buf) {
-        structureName = buf.readUtf(32767);
+        this.structureName = buf.readUtf(32767);
     }
 
     @Override
@@ -27,9 +27,11 @@ public class StructureNameSyncMessage extends BaseS2CMessage {
         buf.writeUtf(structureName);
     }
 
+
+
     @Override
     public void handle(NetworkManager.PacketContext context) {
-        DisplayNameClient.updateStructureName(structureName);
+        context.queue(() -> DisplayNameClient.updateStructureName(structureName, true));
     }
 
 

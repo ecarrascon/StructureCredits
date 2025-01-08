@@ -8,10 +8,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DisplayNameClient implements ClientTickEvent.Client {
-    private static String lastStructureMessage;
+    private static String lastStructure = "haley:you_found_it!";
 
     @Override
     public void tick(Minecraft instance) {
@@ -30,31 +31,34 @@ public class DisplayNameClient implements ClientTickEvent.Client {
         }
     }
 
-    public static void updateStructureName(String structureName) {
-            ConfigData config = StructureCreditsClient.CONFIG_VALUES;
+    public static void updateStructureName(String structureName, boolean isPacket) {
+        if (Objects.equals(lastStructure, structureName) && isPacket) {
+            return;
+        }
 
+        ConfigData config = StructureCreditsClient.CONFIG_VALUES;
+        if (config.isActive() || !isPacket) {
+            lastStructure = structureName;
             String customName = config.getCustomStructureName().getOrDefault(structureName, structureName);
             String[] parts = customName.split(":");
             if (parts.length == 2) {
                 String modName = formatName(parts[0]);
                 String structureNameFormatted = formatName(parts[1]);
 
-                if (!config.getDontShowAll().stream().anyMatch(structureName::startsWith) && !config.getDontShow().contains(structureName)) {
+                if (!isPacket || (config.getDontShowAll().stream().noneMatch(structureName::startsWith) && !config.getDontShow().contains(structureName))) {
                     String messageKey = config.isShowCreator() ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
                     Minecraft.getInstance().player.displayClientMessage(
                             Component.translatable(messageKey, structureNameFormatted, modName),
                             !config.isChatMessage()
                     );
 
-                    lastStructureMessage = Component.translatable(messageKey, structureNameFormatted, modName).getString();
-
-                    if (config.isOnlyOneTime() && !config.getDontShow().contains(structureName)) {
+                    if (isPacket && config.isOnlyOneTime() && !config.getDontShow().contains(structureName)) {
                         config.getDontShow().add(structureName);
                         ConfigData.save(config);
                     }
-
                 }
             }
+        }
     }
 
     private static String formatName(String name) {
@@ -73,27 +77,22 @@ public class DisplayNameClient implements ClientTickEvent.Client {
     }
 
     private void showLastStructureMessage() {
-        if (lastStructureMessage != null) {
-            Minecraft.getInstance().player.displayClientMessage(Component.literal(lastStructureMessage), true);
-        } else {
-            Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.no_last_message"), true);
+        if (lastStructure != null) {
+            updateStructureName(lastStructure, false);
         }
     }
 
     private void addCurrentStructureToDontShow() {
-        if (lastStructureMessage != null) {
+        if (lastStructure != null) {
             ConfigData config = StructureCreditsClient.CONFIG_VALUES;
 
-            String structureName = lastStructureMessage.split(",")[1].trim();
-            if (!config.getDontShow().contains(structureName)) {
-                config.getDontShow().add(structureName);
+            if (!config.getDontShow().contains(lastStructure)) {
+                config.getDontShow().add(lastStructure);
                 ConfigData.save(config);
-                Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.added_to_dont_show", structureName), true);
+                Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.dont_show"), true);
             } else {
-                Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.already_in_dont_show", structureName), true);
+                Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show"), true);
             }
-        } else {
-            Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.no_last_message"), true);
         }
     }
 }
