@@ -16,7 +16,6 @@ public class ConfigData {
 
     private boolean active = true;
     private boolean showOnlyOneTime = true;
-    private int cooldown = 30;
 
     private boolean chatMessage = false;
 
@@ -63,13 +62,7 @@ public class ConfigData {
         return customStructureName;
     }
 
-    public void setCustomStructureName(Map<String, String> customStructureName) {
-        this.customStructureName = customStructureName;
-    }
 
-    public int getCooldown() {
-        return cooldown;
-    }
 
     public List<String> getDontShow() {
         return dontShow;
@@ -79,13 +72,6 @@ public class ConfigData {
         return dontShowAll;
     }
 
-    public void setDontShow(List<String> dontShow) {
-        this.dontShow = dontShow;
-    }
-
-    public void setDontShowAll(List<String> dontShowAll) {
-        this.dontShowAll = dontShowAll;
-    }
 
     public boolean isActive() {
         return active;
