@@ -19,13 +19,15 @@ public class StructureCreditsClient {
         CONFIG_VALUES = ConfigData.init();
         StructureCreditsNet.initializeClient();
 
-        KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance(); // Access the singleton instance
+        ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
+    }
+
+    public static void onInitializeRegisterKey() {
+        KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();
 
         KeyMappingRegistry.register(keyMapRegistry.getDeactivateMsgKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getShowAgainMsgKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getDontShowMsgKeyMapping());
-
-        ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
     }
 }
 

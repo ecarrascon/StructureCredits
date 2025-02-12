@@ -7,5 +7,6 @@ public class StructureCreditsClientFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         StructureCreditsClient.onInitializeClient();
+        StructureCreditsClient.onInitializeRegisterKey();
     }
 }
