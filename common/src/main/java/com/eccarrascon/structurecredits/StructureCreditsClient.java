@@ -1,5 +1,6 @@
 package com.eccarrascon.structurecredits;
 
+import com.ecarrascon.carrasconlib.config.LibConfig;
 import com.eccarrascon.structurecredits.event.DisplayNameClient;
 import com.eccarrascon.structurecredits.network.StructureCreditsNet;
 import com.eccarrascon.structurecredits.registry.KeyMapRegistry;
@@ -11,10 +12,17 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class StructureCreditsClient {
 
-    public static ConfigData CONFIG_VALUES = new ConfigData();
+    public static LibConfig<ConfigData> CONFIG;
+    public static ConfigData CONFIG_VALUES;
+
 
     public static void onInitializeClient() {
-        CONFIG_VALUES = ConfigData.init();
+        CONFIG = new LibConfig<>(
+                "structurecredits-config.json",
+                ConfigData.class,
+                StructureCredits.LOGGER
+        );
+        CONFIG_VALUES = CONFIG.get();
         StructureCreditsNet.initializeClient();
 
         KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();

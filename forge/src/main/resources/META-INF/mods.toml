@@ -11,7 +11,7 @@ authors = "ECarrascon"
 description = '''
 Automatically displays the name and mod source of any structure upon entry, ensuring easy recognition and credit for mod creators.
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.structurecredits]]
 modId = "forge"
