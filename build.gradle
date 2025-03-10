@@ -33,6 +33,10 @@ subprojects {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
         }
+        maven {
+            name = 'JitPack'
+            url = 'https://jitpack.io'
+        }
         exclusiveContent {
             forRepository {
                 maven {

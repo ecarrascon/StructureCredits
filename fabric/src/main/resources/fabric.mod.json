@@ -12,7 +12,7 @@
     "sources": "https://github.com/ecarrascon/StructureCredits"
   },
   "license": "MIT",
-  "icon": "assets/structurecredits/icon.png",
+  "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -31,6 +31,7 @@
     "minecraft": "~1.21.1",
     "java": ">=21",
     "architectury": ">=13.0.8",
+    "carrasconlib": ">=1.21.1-0.1",
     "fabric-api": "*"
   }
 }

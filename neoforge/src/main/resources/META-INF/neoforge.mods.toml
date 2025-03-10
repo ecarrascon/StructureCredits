@@ -11,7 +11,7 @@ authors = "ECarrascon"
 description = '''
 Automatically displays the name and mod source of any structure upon entry, ensuring easy recognition and credit for mod creators.
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.structurecredits]]
 modId = "neoforge"
@@ -31,6 +31,13 @@ side = "BOTH"
 modId = "architectury"
 type = "required"
 versionRange = "[13.0.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.structurecredits]]
+modId = "carrasconlib"
+type = "required"
+versionRange = "[1.21.1-0.1,)"
 ordering = "AFTER"
 side = "BOTH"
 

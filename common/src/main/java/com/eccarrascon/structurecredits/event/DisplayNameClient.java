@@ -1,7 +1,5 @@
 package com.eccarrascon.structurecredits.event;
 
-import com.eccarrascon.structurecredits.ConfigData;
-import com.eccarrascon.structurecredits.StructureCreditsClient;
 import com.eccarrascon.structurecredits.registry.KeyMapRegistry;
 import dev.architectury.event.events.client.ClientTickEvent;
 import net.minecraft.client.Minecraft;
@@ -10,6 +8,9 @@ import net.minecraft.network.chat.Component;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.eccarrascon.structurecredits.StructureCreditsClient.CONFIG;
+import static com.eccarrascon.structurecredits.StructureCreditsClient.CONFIG_VALUES;
 
 public class DisplayNameClient implements ClientTickEvent.Client {
     private static String lastStructure = "haley:you_found_it!";
@@ -36,25 +37,24 @@ public class DisplayNameClient implements ClientTickEvent.Client {
             return;
         }
 
-        ConfigData config = StructureCreditsClient.CONFIG_VALUES;
-        if (config.isActive() || !isPacket) {
+        if (CONFIG_VALUES.isActive() || !isPacket) {
             lastStructure = structureName;
-            String customName = config.getCustomStructureName().getOrDefault(structureName, structureName);
+            String customName = CONFIG_VALUES.getCustomStructureName().getOrDefault(structureName, structureName);
             String[] parts = customName.split(":");
             if (parts.length == 2) {
                 String modName = formatName(parts[0]);
                 String structureNameFormatted = formatName(parts[1]);
 
-                if (!isPacket || (config.getDontShowAll().stream().noneMatch(structureName::startsWith) && !config.getDontShow().contains(structureName))) {
-                    String messageKey = config.isShowCreator() ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
+                if (!isPacket || (CONFIG_VALUES.getDontShowAll().stream().noneMatch(structureName::startsWith) && !CONFIG_VALUES.getDontShow().contains(structureName))) {
+                    String messageKey = CONFIG_VALUES.isShowCreator() ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
                     Minecraft.getInstance().player.displayClientMessage(
                             Component.translatable(messageKey, structureNameFormatted, modName),
-                            !config.isChatMessage()
+                            !CONFIG_VALUES.isChatMessage()
                     );
 
-                    if (isPacket && config.isOnlyOneTime() && !config.getDontShow().contains(structureName)) {
-                        config.getDontShow().add(structureName);
-                        ConfigData.save(config);
+                    if (isPacket && CONFIG_VALUES.isOnlyOneTime() && !CONFIG_VALUES.getDontShow().contains(structureName)) {
+                        CONFIG_VALUES.getDontShow().add(structureName);
+                        CONFIG.save();
                     }
                 }
             }
@@ -68,10 +68,9 @@ public class DisplayNameClient implements ClientTickEvent.Client {
     }
 
     private void toggleActiveState() {
-        ConfigData config = StructureCreditsClient.CONFIG_VALUES;
-        boolean isActive = !config.isActive();
-        config.setActive(isActive);
-        ConfigData.save(config);
+        boolean isActive = !CONFIG_VALUES.isActive();
+        CONFIG_VALUES.setActive(isActive);
+        CONFIG.save();
         String messageKey = isActive ? "text.structurecredits.activated" : "text.structurecredits.deactivated";
         Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
     }
@@ -84,11 +83,10 @@ public class DisplayNameClient implements ClientTickEvent.Client {
 
     private void addCurrentStructureToDontShow() {
         if (lastStructure != null) {
-            ConfigData config = StructureCreditsClient.CONFIG_VALUES;
 
-            if (!config.getDontShow().contains(lastStructure)) {
-                config.getDontShow().add(lastStructure);
-                ConfigData.save(config);
+            if (!CONFIG_VALUES.getDontShow().contains(lastStructure)) {
+                CONFIG_VALUES.getDontShow().add(lastStructure);
+                CONFIG.save();
                 Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.dont_show"), true);
             } else {
                 Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.structurecredits.already_dont_show"), true);
