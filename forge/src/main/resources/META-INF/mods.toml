@@ -33,3 +33,10 @@ mandatory = true
 versionRange = "[9.1.12,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.structurecredits]]
+modId = "carrasconlib"
+mandatory = true
+versionRange = "[1.21.1-0.1,)"
+ordering = "AFTER"
+side = "BOTH"

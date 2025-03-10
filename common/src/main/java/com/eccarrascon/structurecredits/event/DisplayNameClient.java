@@ -68,7 +68,6 @@ public class DisplayNameClient implements ClientTickEvent.Client {
     }
 
     private void toggleActiveState() {
-
         boolean isActive = !CONFIG_VALUES.isActive();
         CONFIG_VALUES.setActive(isActive);
         CONFIG.save();

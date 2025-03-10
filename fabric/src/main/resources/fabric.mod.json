@@ -29,6 +29,7 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.20.1",
-    "architectury": ">=9.1.12"
+    "architectury": ">=9.1.12",
+    "carrasconlib": ">=1.20.1-0.1"
   }
 }
