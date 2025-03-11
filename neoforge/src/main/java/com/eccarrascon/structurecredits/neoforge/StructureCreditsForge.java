@@ -10,6 +10,5 @@ import net.neoforged.fml.common.Mod;
 public class StructureCreditsForge {
     public StructureCreditsForge(IEventBus modBus) {
         StructureCredits.init();
-        modBus.register(StructureCreditsClientForge.class);
     }
 }
