@@ -1,21 +1,31 @@
 package com.eccarrascon.structurecredits.network;
 
-import dev.architectury.networking.simple.MessageType;
-import dev.architectury.networking.simple.SimpleNetworkManager;
+import dev.architectury.impl.NetworkAggregator;
+import dev.architectury.networking.NetworkManager;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
-import static com.eccarrascon.structurecredits.StructureCredits.MOD_ID;
+import java.util.List;
 
 
-public interface StructureCreditsNet {
-    SimpleNetworkManager NET = SimpleNetworkManager.create(MOD_ID);
+public class StructureCreditsNet {
+    public static final ResourceLocation STRUCTURE_NAME_PACKET_ID =
+            ResourceLocation.fromNamespaceAndPath("structurecredits", "sync_structure_name");
 
-    MessageType STRUCTURE_NAME_SYNC = NET.registerS2C("structure_name_sync", StructureNameSyncMessage::new);
-
-    static void initialize() {
-
+    public static void registerPackets() {
+        NetworkAggregator.registerS2CType(STRUCTURE_NAME_PACKET_ID, List.of());
     }
 
-    static void initializeClient() {
+    public static void sendStructureName(ServerPlayer serverPlayer, String structureName) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 
+        buf.writeUtf(structureName);
+
+        RegistryFriendlyByteBuf registryBuf = new RegistryFriendlyByteBuf(buf, serverPlayer.server.registryAccess());
+
+        NetworkManager.sendToPlayer(serverPlayer, STRUCTURE_NAME_PACKET_ID, registryBuf);
     }
 }

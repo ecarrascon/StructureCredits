@@ -5,6 +5,7 @@ import com.eccarrascon.structurecredits.event.DisplayNameClient;
 import com.eccarrascon.structurecredits.network.StructureCreditsNet;
 import com.eccarrascon.structurecredits.registry.KeyMapRegistry;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,9 +24,15 @@ public class StructureCreditsClient {
                 StructureCredits.LOGGER
         );
         CONFIG_VALUES = CONFIG.get();
-        StructureCreditsNet.initializeClient();
 
         ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, StructureCreditsNet.STRUCTURE_NAME_PACKET_ID, (buf, context) -> {
+            String structureName = buf.readUtf();
+            context.queue(() -> {
+                DisplayNameClient.updateStructureName(structureName, true);
+            });
+        });
     }
 
     public static void onInitializeRegisterKey() {

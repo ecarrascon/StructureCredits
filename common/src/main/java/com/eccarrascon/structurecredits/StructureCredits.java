@@ -5,6 +5,8 @@ import com.eccarrascon.structurecredits.event.ObtainAllStructuresEvent;
 import com.eccarrascon.structurecredits.network.StructureCreditsNet;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.TickEvent;
+import dev.architectury.platform.Platform;
+import net.fabricmc.api.EnvType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +18,9 @@ public class StructureCredits {
     public static final boolean DIMD_COMPAT = isModLoaded("dimdungeons");
 
     public static void init() {
-        StructureCreditsNet.initialize();
+        if (Platform.getEnv() == EnvType.SERVER) {
+            StructureCreditsNet.registerPackets();
+        }
         LifecycleEvent.SERVER_LEVEL_LOAD.register(new ObtainAllStructuresEvent());
         TickEvent.PLAYER_POST.register(new DetectStructure());
     }

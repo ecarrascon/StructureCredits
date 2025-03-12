@@ -4,7 +4,7 @@ import com.catastrophe573.dimdungeons.dimension.DungeonData;
 import com.catastrophe573.dimdungeons.structure.DungeonRoom;
 import com.catastrophe573.dimdungeons.utils.DungeonUtils;
 import com.eccarrascon.structurecredits.StructureCredits;
-import com.eccarrascon.structurecredits.network.StructureNameSyncMessage;
+import com.eccarrascon.structurecredits.network.StructureCreditsNet;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Holder;
@@ -45,7 +45,9 @@ public class DetectStructure implements TickEvent.Player {
         DungeonRoom room = DungeonData.get(player.level()).getRoomAtPos(player.chunkPosition());
         if (room != null && (actualDimensionalStructure == null || !actualDimensionalStructure.equals(room.structure))) {
             actualDimensionalStructure = room.structure;
-            new StructureNameSyncMessage(room.structure).sendTo((ServerPlayer) player);
+            if (player instanceof ServerPlayer serverPlayer) {
+                StructureCreditsNet.sendStructureName(serverPlayer, room.structure);
+            }
         }
     }
 
@@ -61,7 +63,9 @@ public class DetectStructure implements TickEvent.Player {
             Holder.Reference<Structure> structureHolder = level.registryAccess().registryOrThrow(Registries.STRUCTURE).getHolderOrThrow(structureKey);
             if (LocationPredicate.Builder.inStructure(structureHolder).build().matches(level, x, y, z)) {
                 actualStructure = structureHolder;
-                new StructureNameSyncMessage(structureKey.location().toString()).sendTo((ServerPlayer) player);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    StructureCreditsNet.sendStructureName(serverPlayer, structureKey.location().toString());
+                }
                 break;
             }
         }
