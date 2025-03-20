@@ -9,6 +9,8 @@ import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import static com.eccarrascon.structurecredits.api.StructureCreditsAPI.flushPendingMappings;
+
 @Environment(EnvType.CLIENT)
 public class StructureCreditsClient {
 
@@ -23,6 +25,10 @@ public class StructureCreditsClient {
                 StructureCredits.LOGGER
         );
         CONFIG_VALUES = CONFIG.get();
+
+        flushPendingMappings();
+
+
         StructureCreditsNet.initializeClient();
 
         KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();
