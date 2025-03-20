@@ -10,6 +10,8 @@ import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import static com.eccarrascon.structurecredits.api.StructureCreditsAPI.flushPendingMappings;
+
 
 @Environment(EnvType.CLIENT)
 public class StructureCreditsClient {
@@ -23,7 +25,10 @@ public class StructureCreditsClient {
                 ConfigData.class,
                 StructureCredits.LOGGER
         );
+
         CONFIG_VALUES = CONFIG.get();
+
+        flushPendingMappings();
 
         ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
 
@@ -33,6 +38,8 @@ public class StructureCreditsClient {
                 DisplayNameClient.updateStructureName(structureName, true);
             });
         });
+
+
     }
 
     public static void onInitializeRegisterKey() {
