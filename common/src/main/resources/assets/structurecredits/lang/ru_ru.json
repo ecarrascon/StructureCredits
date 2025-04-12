@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Добро пожаловать в: %1$s §7- из: %2$s"
+  "text.structurecredits.message": "§7Добро пожаловать в: %1$s §7- От: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Добро пожаловать в: %1$s §7- От: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Добро пожаловать в: %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Добро пожаловать в: %1$s",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "Отключить сообщение о структуре",
+  "text.structurecredits.deactivated": "§7Сообщение о структуре отключено.",
+  "text.structurecredits.activated": "§7Сообщение о структуре включено.",
+
+  "key.structurecredits.show_again_key": "Показать сообщение о структуре снова",
+  "key.structurecredits.dont_show_key": "Больше никогда не показывать эту структуру",
+  "text.structurecredits.dont_show": "§7Эта структура не будет отображать сообщение.",
+  "text.structurecredits.already_dont_show": "§7Эта структура уже настроена не показывать сообщение."
 }
