@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Bun venit la: %1$s §7- De: %2$s"
+  "text.structurecredits.message": "§7Bine ai venit la: %1$s §7- De: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Bine ai venit la: %1$s §7- De: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Bine ai venit la: %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Bine ai venit la: %1$s",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "Dezactivează Mesajul Structurii",
+  "text.structurecredits.deactivated": "§7Mesajul structurii a fost dezactivat.",
+  "text.structurecredits.activated": "§7Mesajul structurii a fost activat.",
+
+  "key.structurecredits.show_again_key": "Arată Din Nou Mesajul Structurii",
+  "key.structurecredits.dont_show_key": "Nu Mai Arăta Această Structură Niciodată",
+  "text.structurecredits.dont_show": "§7Această structură nu va afișa un mesaj.",
+  "text.structurecredits.already_dont_show": "§7Această structură este deja setată să nu afișeze un mesaj."
 }

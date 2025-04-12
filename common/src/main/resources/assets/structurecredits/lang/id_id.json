@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Selamat Datang di: %1$s §7- By: %2$s"
+  "text.structurecredits.message": "§7Selamat datang di: %1$s §7- Oleh: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Selamat datang di: %1$s §7- Oleh: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Selamat datang di: %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Selamat datang di: %1$s",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "Nonaktifkan Pesan Struktur",
+  "text.structurecredits.deactivated": "§7Pesan struktur telah dinonaktifkan.",
+  "text.structurecredits.activated": "§7Pesan struktur telah diaktifkan.",
+
+  "key.structurecredits.show_again_key": "Tampilkan Pesan Struktur Lagi",
+  "key.structurecredits.dont_show_key": "Jangan Pernah Tampilkan Struktur Ini Lagi",
+  "text.structurecredits.dont_show": "§7Struktur ini tidak akan menampilkan pesan.",
+  "text.structurecredits.already_dont_show": "§7Struktur ini sudah diatur agar tidak menampilkan pesan."
 }

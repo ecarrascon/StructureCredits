@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Hoşgeldiniz: %1$s §7- By: %2$s"
+  "text.structurecredits.message": "§7Şuna hoş geldiniz: %1$s §7- Yapan: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Şuna hoş geldiniz: %1$s §7- Yapan: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Şuna hoş geldiniz: %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Şuna hoş geldiniz: %1$s",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "Yapı Mesajını Devre Dışı Bırak",
+  "text.structurecredits.deactivated": "§7Yapı mesajı devre dışı bırakıldı.",
+  "text.structurecredits.activated": "§7Yapı mesajı etkinleştirildi.",
+
+  "key.structurecredits.show_again_key": "Yapı Mesajını Tekrar Göster",
+  "key.structurecredits.dont_show_key": "Bu Yapıyı Bir Daha Asla Gösterme",
+  "text.structurecredits.dont_show": "§7Bu yapı bir mesaj görüntülemeyecek.",
+  "text.structurecredits.already_dont_show": "§7Bu yapı zaten mesaj göstermeyecek şekilde ayarlandı."
 }

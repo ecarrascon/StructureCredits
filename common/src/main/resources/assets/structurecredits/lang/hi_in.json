@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7आपका स्वागत है: %1$s §7- वारा: %2$s"
+  "text.structurecredits.message": "§7%1$s में आपका स्वागत है §7- द्वारा: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7%1$s में आपका स्वागत है §7- द्वारा: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7%1$s में आपका स्वागत है",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7%1$s में आपका स्वागत है",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "स्ट्रक्चर संदेश निष्क्रिय करें",
+  "text.structurecredits.deactivated": "§7स्ट्रक्चर संदेश निष्क्रिय कर दिया गया है।",
+  "text.structurecredits.activated": "§7स्ट्रक्चर संदेश सक्रिय कर दिया गया है।",
+
+  "key.structurecredits.show_again_key": "स्ट्रक्चर संदेश फिर से दिखाएँ",
+  "key.structurecredits.dont_show_key": "इस स्ट्रक्चर को फिर कभी न दिखाएँ",
+  "text.structurecredits.dont_show": "§7यह स्ट्रक्चर कोई संदेश प्रदर्शित नहीं करेगा।",
+  "text.structurecredits.already_dont_show": "§7यह स्ट्रक्चर पहले से ही संदेश न दिखाने के लिए सेट है।"
 }

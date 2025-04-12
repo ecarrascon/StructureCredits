@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Καλωσήρθες στο: %1$s §7- του: %2$s"
+  "text.structurecredits.message": "§7Καλώς ήρθατε στο: %1$s §7- Από: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Καλώς ήρθατε στο: %1$s §7- Από: %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Καλώς ήρθατε στο: %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Καλώς ήρθατε στο: %1$s",
+
+  "category.structurecredits.keys": "Credits Δομών",
+  "key.structurecredits.deactivate_key": "Απενεργοποίηση Μηνύματος Δομής",
+  "text.structurecredits.deactivated": "§7Το μήνυμα της δομής απενεργοποιήθηκε.",
+  "text.structurecredits.activated": "§7Το μήνυμα της δομής ενεργοποιήθηκε.",
+
+  "key.structurecredits.show_again_key": "Εμφάνιση Μηνύματος Δομής Ξανά",
+  "key.structurecredits.dont_show_key": "Ποτέ μην εμφανίσετε ξανά αυτήν τη δομή",
+  "text.structurecredits.dont_show": "§7Αυτή η δομή δεν θα εμφανίζει μήνυμα.",
+  "text.structurecredits.already_dont_show": "§7Αυτή η δομή έχει ήδη ρυθμιστεί να μην εμφανίζει μήνυμα."
 }

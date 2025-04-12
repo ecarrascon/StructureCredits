@@ -1,3 +1,17 @@
 {
-  "text.structurecredits.message": "§7Bienvenue à: %1$s §7- De: %2$s"
+  "text.structurecredits.message": "§7Bienvenue dans : %1$s §7- Par : %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Bienvenue dans : %1$s §7- Par : %2$s",
+
+  "text.structurecredits.message_no_creator": "§7Bienvenue dans : %1$s",
+  "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Bienvenue dans : %1$s",
+
+  "category.structurecredits.keys": "Structure Credits",
+  "key.structurecredits.deactivate_key": "Désactiver le message de structure",
+  "text.structurecredits.deactivated": "§7Le message de structure a été désactivé.",
+  "text.structurecredits.activated": "§7Le message de structure a été activé.",
+
+  "key.structurecredits.show_again_key": "Afficher à nouveau le message de structure",
+  "key.structurecredits.dont_show_key": "Ne plus jamais afficher cette structure",
+  "text.structurecredits.dont_show": "§7Cette structure n'affichera pas de message.",
+  "text.structurecredits.already_dont_show": "§7Cette structure est déjà configurée pour ne pas afficher de message."
 }
