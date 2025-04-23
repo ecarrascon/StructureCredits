@@ -64,21 +64,21 @@ public class DetectStructure implements TickEvent.Player {
 
         actualStructure = null;
 
-        ChunkPos chunkPos = new ChunkPos((int) x >> 4, (int) z >> 4);
-        List<StructureStart> starts = level.structureManager()
-                .startsForStructure(chunkPos, s -> true);
+        ChunkPos playerChunkPos = new ChunkPos((int) x >> 4, (int) z >> 4);
+        List<StructureStart> structuresInChunk = level.structureManager()
+                .startsForStructure(playerChunkPos, predicate -> true);
 
-        for (StructureStart start : starts) {
-            ResourceKey<Structure> key = ResourceKey.create(
+        for (StructureStart structure : structuresInChunk) {
+            ResourceKey<Structure> structureFound = ResourceKey.create(
                     Registries.STRUCTURE,
                     level.registryAccess()
                             .registryOrThrow(Registries.STRUCTURE)
-                            .getKey(start.getStructure())
+                            .getKey(structure.getStructure())
             );
 
-            if (LocationPredicate.inStructure(key).matches(level, x, y, z)) {
-                actualStructure = key;
-                new StructureNameSyncMessage(key.location().toString()).sendTo((ServerPlayer) player);
+            if (LocationPredicate.inStructure(structureFound).matches(level, x, y, z)) {
+                actualStructure = structureFound;
+                new StructureNameSyncMessage(structureFound.location().toString()).sendTo((ServerPlayer) player);
                 break;
             }
         }
