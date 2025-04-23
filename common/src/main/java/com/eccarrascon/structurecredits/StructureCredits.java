@@ -1,9 +1,7 @@
 package com.eccarrascon.structurecredits;
 
 import com.eccarrascon.structurecredits.event.DetectStructure;
-import com.eccarrascon.structurecredits.event.ObtainAllStructuresEvent;
 import com.eccarrascon.structurecredits.network.StructureCreditsNet;
-import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.platform.Platform;
 import net.fabricmc.api.EnvType;
@@ -21,7 +19,6 @@ public class StructureCredits {
         if (Platform.getEnv() == EnvType.SERVER) {
             StructureCreditsNet.registerPackets();
         }
-        LifecycleEvent.SERVER_LEVEL_LOAD.register(new ObtainAllStructuresEvent());
         TickEvent.PLAYER_POST.register(new DetectStructure());
     }
 }

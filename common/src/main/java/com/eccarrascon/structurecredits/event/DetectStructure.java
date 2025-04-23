@@ -10,16 +10,22 @@ import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+
+import java.util.List;
 
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
 
+    private int ticksSinceCheck = 0;
     private Holder<Structure> actualStructure;
     private String actualDimensionalStructure;
 
@@ -37,7 +43,11 @@ public class DetectStructure implements TickEvent.Player {
         if (StructureCredits.DIMD_COMPAT && DungeonUtils.isDimensionDungeon(player.level())) {
             handleDimensionalDungeonDetection(player);
         } else {
-            isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+            ticksSinceCheck++;
+            if (ticksSinceCheck >= 20) {
+                ticksSinceCheck = 0;
+                isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+            }
         }
     }
 
@@ -58,13 +68,24 @@ public class DetectStructure implements TickEvent.Player {
 
         actualStructure = null;
 
+        ChunkPos playerChunkPos = new ChunkPos((int) x >> 4, (int) z >> 4);
+        List<StructureStart> structuresInChunk = level.structureManager()
+                .startsForStructure(playerChunkPos, predicate -> true);
 
-        for (ResourceKey<Structure> structureKey : ObtainAllStructuresEvent.allStructures) {
-            Holder.Reference<Structure> structureHolder = level.registryAccess().registryOrThrow(Registries.STRUCTURE).getHolderOrThrow(structureKey);
-            if (LocationPredicate.Builder.inStructure(structureHolder).build().matches(level, x, y, z)) {
-                actualStructure = structureHolder;
-                if (player instanceof ServerPlayer serverPlayer) {
-                    StructureCreditsNet.sendStructureName(serverPlayer, structureKey.location().toString());
+        for (StructureStart structure : structuresInChunk) {
+            ResourceLocation id = level.registryAccess()
+                    .registryOrThrow(Registries.STRUCTURE)
+                    .getKey(structure.getStructure());
+            ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, id);
+
+            Holder<Structure> holder = level.registryAccess()
+                    .registryOrThrow(Registries.STRUCTURE)
+                    .getHolderOrThrow(key);
+
+            if (LocationPredicate.Builder.inStructure(holder).build().matches(level, x, y, z)) {
+                actualStructure = holder;
+                if (player instanceof ServerPlayer sp) {
+                    StructureCreditsNet.sendStructureName(sp, id.toString());
                 }
                 break;
             }
