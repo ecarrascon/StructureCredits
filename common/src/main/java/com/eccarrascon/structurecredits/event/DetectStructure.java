@@ -7,17 +7,23 @@ import com.eccarrascon.structurecredits.StructureCredits;
 import com.eccarrascon.structurecredits.network.StructureNameSyncMessage;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+
+import java.util.List;
 
 import static dev.architectury.utils.GameInstance.getServer;
 
 public class DetectStructure implements TickEvent.Player {
 
+    private int ticksSinceCheck = 0;
     private ResourceKey<Structure> actualStructure;
     private String actualDimensionalStructure;
 
@@ -35,7 +41,11 @@ public class DetectStructure implements TickEvent.Player {
         if (StructureCredits.DIMD_COMPAT && DungeonUtils.isDimensionDungeon(player.level())) {
             handleDimensionalDungeonDetection(player);
         } else {
-            isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+            ticksSinceCheck++;
+            if (ticksSinceCheck >= 20) {
+                ticksSinceCheck = 0;
+                isPlayerInAnyStructure(player, getServerLevel(player.level()), player.getX(), player.getY(), player.getZ());
+            }
         }
     }
 
@@ -54,11 +64,21 @@ public class DetectStructure implements TickEvent.Player {
 
         actualStructure = null;
 
+        ChunkPos chunkPos = new ChunkPos((int) x >> 4, (int) z >> 4);
+        List<StructureStart> starts = level.structureManager()
+                .startsForStructure(chunkPos, s -> true);
 
-        for (ResourceKey<Structure> structureKey : ObtainAllStructuresEvent.allStructures) {
-            if (LocationPredicate.inStructure(structureKey).matches(level, x, y, z)) {
-                actualStructure = structureKey;
-                new StructureNameSyncMessage(structureKey.location().toString()).sendTo((ServerPlayer) player);
+        for (StructureStart start : starts) {
+            ResourceKey<Structure> key = ResourceKey.create(
+                    Registries.STRUCTURE,
+                    level.registryAccess()
+                            .registryOrThrow(Registries.STRUCTURE)
+                            .getKey(start.getStructure())
+            );
+
+            if (LocationPredicate.inStructure(key).matches(level, x, y, z)) {
+                actualStructure = key;
+                new StructureNameSyncMessage(key.location().toString()).sendTo((ServerPlayer) player);
                 break;
             }
         }

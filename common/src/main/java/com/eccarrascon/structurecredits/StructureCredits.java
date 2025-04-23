@@ -1,9 +1,7 @@
 package com.eccarrascon.structurecredits;
 
 import com.eccarrascon.structurecredits.event.DetectStructure;
-import com.eccarrascon.structurecredits.event.ObtainAllStructuresEvent;
 import com.eccarrascon.structurecredits.network.StructureCreditsNet;
-import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.TickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +15,6 @@ public class StructureCredits {
 
     public static void init() {
         StructureCreditsNet.initialize();
-        LifecycleEvent.SERVER_LEVEL_LOAD.register(new ObtainAllStructuresEvent());
         TickEvent.PLAYER_POST.register(new DetectStructure());
 
     }
