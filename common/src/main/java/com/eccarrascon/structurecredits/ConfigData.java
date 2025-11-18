@@ -11,6 +11,23 @@ public class ConfigData {
     private boolean chatMessage = false;
     private boolean showCreator = true;
 
+    // Eequire visiting different structure before showing same structure again
+    private boolean requireDifferentStructure = true;
+
+    // Continuous display
+    private boolean continuousDisplay = false;
+
+    // Display appearance
+    private float textSize = 1.0f; // Scale multiplier for text size
+    private int labelColor = 0xAAAAAA; // Color for "Welcome to:" and "By:" (light gray)
+    private int nameColor = 0xFFFFFF; // Color for structure and mod names (white)
+
+    // Display positioning and duration
+    private int displayDuration = 60; // ticks (3 seconds)
+    private String displayPosition = "BOTTOM_CENTER"; // TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+    private int displayOffsetX = 10; // pixels from edge
+    private int displayOffsetY = 10; // pixels from edge
+
     private Map<String, String> customStructureName = new HashMap<>() {{
         put("minecraft:swamp_hut", "a_cat:cat_hut");
     }};
@@ -51,6 +68,78 @@ public class ConfigData {
 
     public void setShowCreator(boolean showCreator) {
         this.showCreator = showCreator;
+    }
+
+    public boolean isRequireDifferentStructure() {
+        return requireDifferentStructure;
+    }
+
+    public void setRequireDifferentStructure(boolean requireDifferentStructure) {
+        this.requireDifferentStructure = requireDifferentStructure;
+    }
+
+    public boolean isContinuousDisplay() {
+        return continuousDisplay;
+    }
+
+    public void setContinuousDisplay(boolean continuousDisplay) {
+        this.continuousDisplay = continuousDisplay;
+    }
+
+    public float getTextSize() {
+        return textSize;
+    }
+
+    public void setTextSize(float textSize) {
+        this.textSize = textSize;
+    }
+
+    public int getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(int labelColor) {
+        this.labelColor = labelColor;
+    }
+
+    public int getNameColor() {
+        return nameColor;
+    }
+
+    public void setNameColor(int nameColor) {
+        this.nameColor = nameColor;
+    }
+
+    public int getDisplayDuration() {
+        return displayDuration;
+    }
+
+    public void setDisplayDuration(int displayDuration) {
+        this.displayDuration = displayDuration;
+    }
+
+    public String getDisplayPosition() {
+        return displayPosition;
+    }
+
+    public void setDisplayPosition(String displayPosition) {
+        this.displayPosition = displayPosition;
+    }
+
+    public int getDisplayOffsetX() {
+        return displayOffsetX;
+    }
+
+    public void setDisplayOffsetX(int displayOffsetX) {
+        this.displayOffsetX = displayOffsetX;
+    }
+
+    public int getDisplayOffsetY() {
+        return displayOffsetY;
+    }
+
+    public void setDisplayOffsetY(int displayOffsetY) {
+        this.displayOffsetY = displayOffsetY;
     }
 
     public Map<String, String> getCustomStructureName() {

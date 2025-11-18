@@ -1,17 +1,40 @@
 {
-  "text.structurecredits.message": "§7Bienvenido a: %1$s §7- De: %2$s",
-  "text.structurecredits.message_dimensional_dungeon": "§7Bienvenido a: %1$s §7- De: %2$s",
-
+  "text.structurecredits.message": "§7Bienvenido a: %1$s §7 - De: %2$s",
+  "text.structurecredits.message_dimensional_dungeon": "§7Bienvenido a: %1$s §7 - De: %2$s",
   "text.structurecredits.message_no_creator": "§7Bienvenido a: %1$s",
   "text.structurecredits.message_no_creator_dimensional_dungeon": "§7Bienvenido a: %1$s",
 
-  "category.structurecredits.keys": "Structure Credits",
-  "key.structurecredits.deactivate_key": "Desactivar Structure Credits",
-  "text.structurecredits.deactivated": "§7El mensaje de estructura ha sido desactivado.",
-  "text.structurecredits.activated": "§7El mensaje de estructura ha sido activado.",
+  "text.structurecredits.overlay.welcome": "Bienvenido a: ",
+  "text.structurecredits.overlay.by": " - De: ",
 
-  "key.structurecredits.show_again_key": "Mostrar Mensaje de Estructura Otra Vez",
+  "category.structurecredits.keys": "Créditos de estructuras",
+
+  "key.structurecredits.toggle_active": "Alternar mensajes de estructura",
+  "text.structurecredits.deactivated": "§7Mensajes de estructura desactivados.",
+  "text.structurecredits.activated": "§7Mensajes de estructura activados.",
+
+  "key.structurecredits.toggle_only_one_time": "Alternar Mostrar Solo Una Vez",
+  "text.structurecredits.only_one_time_enabled": "§7Los mensajes de estructura se mostrarán solo una vez por estructura.",
+  "text.structurecredits.only_one_time_disabled": "§7Los mensajes de estructura se mostrarán cada vez.",
+
+  "key.structurecredits.toggle_chat_message": "Alternar modo Mensaje en Chat",
+  "text.structurecredits.chat_message_enabled": "§7Los mensajes de estructura aparecerán en el chat.",
+  "text.structurecredits.chat_message_disabled": "§7Los mensajes de estructura aparecerán como superposición.",
+
+  "key.structurecredits.toggle_show_creator": "Alternar Mostrar Creador",
+  "text.structurecredits.show_creator_enabled": "§7Los nombres de los creadores se mostrarán.",
+  "text.structurecredits.show_creator_disabled": "§7Los nombres de los creadores se ocultarán.",
+
+  "key.structurecredits.toggle_continuous_display": "Alternar Visualización Continua",
+  "text.structurecredits.continuous_display_enabled": "§7Los mensajes permanecerán visibles mientras estés en la estructura.",
+  "text.structurecredits.continuous_display_disabled": "§7Los mensajes se desvanecerán después de un tiempo.",
+
+  "key.structurecredits.toggle_require_different": "Alternar Requerir Estructura Distinta",
+  "text.structurecredits.require_different_enabled": "§7Debes visitar una estructura diferente antes de ver el mensaje de nuevo.",
+  "text.structurecredits.require_different_disabled": "§7Puedes ver el mensaje inmediatamente al volver a entrar en la estructura.",
+
+  "key.structurecredits.show_again_key": "Mostrar Último Mensaje de Estructura",
   "key.structurecredits.dont_show_key": "No Mostrar Esta Estructura Nunca Más",
   "text.structurecredits.dont_show": "§7Esta estructura no mostrará un mensaje.",
-  "text.structurecredits.already_dont_show": "§7Esta estructura ya está configurada para no mostrar mensajes."
+  "text.structurecredits.already_dont_show": "§7Esta estructura ya está configurada para no mostrar un mensaje."
 }

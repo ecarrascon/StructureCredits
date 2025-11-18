@@ -1,5 +1,6 @@
 package com.eccarrascon.structurecredits.event;
 
+import com.eccarrascon.structurecredits.client.StructureOverlayRenderer;
 import com.eccarrascon.structurecredits.registry.KeyMapRegistry;
 import dev.architectury.event.events.client.ClientTickEvent;
 import net.minecraft.client.Minecraft;
@@ -14,13 +15,35 @@ import static com.eccarrascon.structurecredits.StructureCreditsClient.CONFIG_VAL
 
 public class DisplayNameClient implements ClientTickEvent.Client {
     private static String lastStructure = "haley:you_found_it!";
+    private static String currentStructure = null;
+    private static String previousStructure = null; // Track previous structure for requireDifferentStructure
 
     @Override
     public void tick(Minecraft instance) {
         KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();
 
-        while (keyMapRegistry.getDeactivateMsgKeyMapping().consumeClick()) {
+        while (keyMapRegistry.getToggleActiveKeyMapping().consumeClick()) {
             toggleActiveState();
+        }
+
+        while (keyMapRegistry.getToggleOnlyOneTimeKeyMapping().consumeClick()) {
+            toggleOnlyOneTime();
+        }
+
+        while (keyMapRegistry.getToggleChatMessageKeyMapping().consumeClick()) {
+            toggleChatMessage();
+        }
+
+        while (keyMapRegistry.getToggleShowCreatorKeyMapping().consumeClick()) {
+            toggleShowCreator();
+        }
+
+        while (keyMapRegistry.getToggleContinuousDisplayKeyMapping().consumeClick()) {
+            toggleContinuousDisplay();
+        }
+
+        while (keyMapRegistry.getToggleRequireDifferentStructureKeyMapping().consumeClick()) {
+            toggleRequireDifferentStructure();
         }
 
         while (keyMapRegistry.getShowAgainMsgKeyMapping().consumeClick()) {
@@ -30,32 +53,74 @@ public class DisplayNameClient implements ClientTickEvent.Client {
         while (keyMapRegistry.getDontShowMsgKeyMapping().consumeClick()) {
             addCurrentStructureToDontShow();
         }
+
+        // Tick the overlay renderer
+        if (!CONFIG_VALUES.isChatMessage()) {
+            StructureOverlayRenderer.tick();
+        }
     }
 
     public static void updateStructureName(String structureName, boolean isPacket) {
-        if (Objects.equals(lastStructure, structureName) && isPacket) {
-            return;
+        // Handle structure entry/exit
+        if (isPacket) {
+            if (structureName == null || structureName.isEmpty()) {
+                // Player left structure
+                previousStructure = currentStructure; // Store for requireDifferentStructure
+                currentStructure = null;
+                if (!CONFIG_VALUES.isChatMessage()) {
+                    StructureOverlayRenderer.clearMessage();
+                }
+                return;
+            }
+
+            // Player entered structure
+            if (Objects.equals(currentStructure, structureName)) {
+                // Same structure, already displaying if continuous mode
+                return;
+            }
+
+            // Check if we should show the message based on requireDifferentStructure
+            if (CONFIG_VALUES.isRequireDifferentStructure() && !CONFIG_VALUES.isOnlyOneTime()) {
+                // Only show if we came from a different structure
+                if (Objects.equals(previousStructure, structureName)) {
+                    // Coming back to the same structure without visiting another
+                    currentStructure = structureName;
+                    return;
+                }
+            }
+
+            previousStructure = currentStructure; // Update previous before changing current
+            currentStructure = structureName;
         }
 
         if (CONFIG_VALUES.isActive() || !isPacket) {
             lastStructure = structureName;
-            String customName = CONFIG_VALUES.getCustomStructureName().getOrDefault(structureName, structureName);
-            String[] parts = customName.split(":");
-            if (parts.length == 2) {
-                String modName = formatName(parts[0]);
-                String structureNameFormatted = formatName(parts[1]);
+            displayStructureMessage(structureName, isPacket);
+        }
+    }
 
-                if (!isPacket || (CONFIG_VALUES.getDontShowAll().stream().noneMatch(structureName::startsWith) && !CONFIG_VALUES.getDontShow().contains(structureName))) {
-                    String messageKey = CONFIG_VALUES.isShowCreator() ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
-                    Minecraft.getInstance().player.displayClientMessage(
-                            Component.translatable(messageKey, structureNameFormatted, modName),
-                            !CONFIG_VALUES.isChatMessage()
-                    );
+    private static void displayStructureMessage(String structureName, boolean isPacket) {
+        String customName = CONFIG_VALUES.getCustomStructureName().getOrDefault(structureName, structureName);
+        String[] parts = customName.split(":");
+        if (parts.length == 2) {
+            String modName = formatName(parts[0]);
+            String structureNameFormatted = formatName(parts[1]);
+            boolean showCreator = CONFIG_VALUES.isShowCreator();
 
-                    if (isPacket && CONFIG_VALUES.isOnlyOneTime() && !CONFIG_VALUES.getDontShow().contains(structureName)) {
-                        CONFIG_VALUES.getDontShow().add(structureName);
-                        CONFIG.save();
-                    }
+            if (!isPacket || (CONFIG_VALUES.getDontShowAll().stream().noneMatch(structureName::startsWith) && !CONFIG_VALUES.getDontShow().contains(structureName))) {
+                if (CONFIG_VALUES.isChatMessage()) {
+                    // Use chat message with color codes
+                    String messageKey = showCreator ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
+                    Component messageComponent = Component.translatable(messageKey, structureNameFormatted, modName);
+                    Minecraft.getInstance().player.displayClientMessage(messageComponent, false);
+                } else {
+                    // Use custom overlay with separate colors
+                    StructureOverlayRenderer.setMessage(structureNameFormatted, modName, showCreator);
+                }
+
+                if (isPacket && CONFIG_VALUES.isOnlyOneTime() && !CONFIG_VALUES.getDontShow().contains(structureName)) {
+                    CONFIG_VALUES.getDontShow().add(structureName);
+                    CONFIG.save();
                 }
             }
         }
@@ -75,6 +140,46 @@ public class DisplayNameClient implements ClientTickEvent.Client {
         Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
     }
 
+    private void toggleOnlyOneTime() {
+        boolean value = !CONFIG_VALUES.isOnlyOneTime();
+        CONFIG_VALUES.setShowOnlyOneTime(value);
+        CONFIG.save();
+        String messageKey = value ? "text.structurecredits.only_one_time_enabled" : "text.structurecredits.only_one_time_disabled";
+        Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
+    }
+
+    private void toggleChatMessage() {
+        boolean value = !CONFIG_VALUES.isChatMessage();
+        CONFIG_VALUES.setChatMessage(value);
+        CONFIG.save();
+        String messageKey = value ? "text.structurecredits.chat_message_enabled" : "text.structurecredits.chat_message_disabled";
+        Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
+    }
+
+    private void toggleShowCreator() {
+        boolean value = !CONFIG_VALUES.isShowCreator();
+        CONFIG_VALUES.setShowCreator(value);
+        CONFIG.save();
+        String messageKey = value ? "text.structurecredits.show_creator_enabled" : "text.structurecredits.show_creator_disabled";
+        Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
+    }
+
+    private void toggleContinuousDisplay() {
+        boolean value = !CONFIG_VALUES.isContinuousDisplay();
+        CONFIG_VALUES.setContinuousDisplay(value);
+        CONFIG.save();
+        String messageKey = value ? "text.structurecredits.continuous_display_enabled" : "text.structurecredits.continuous_display_disabled";
+        Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
+    }
+
+    private void toggleRequireDifferentStructure() {
+        boolean value = !CONFIG_VALUES.isRequireDifferentStructure();
+        CONFIG_VALUES.setRequireDifferentStructure(value);
+        CONFIG.save();
+        String messageKey = value ? "text.structurecredits.require_different_enabled" : "text.structurecredits.require_different_disabled";
+        Minecraft.getInstance().player.displayClientMessage(Component.translatable(messageKey), true);
+    }
+
     private void showLastStructureMessage() {
         if (lastStructure != null) {
             updateStructureName(lastStructure, false);
@@ -83,8 +188,6 @@ public class DisplayNameClient implements ClientTickEvent.Client {
 
     private void addCurrentStructureToDontShow() {
         if (lastStructure != null) {
-
-
             if (!CONFIG_VALUES.getDontShow().contains(lastStructure)) {
                 CONFIG_VALUES.getDontShow().add(lastStructure);
                 CONFIG.save();

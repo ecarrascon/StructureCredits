@@ -54,6 +54,10 @@ public class DetectStructure implements TickEvent.Player {
         if (room != null && (actualDimensionalStructure == null || !actualDimensionalStructure.equals(room.structure))) {
             actualDimensionalStructure = room.structure;
             new StructureNameSyncMessage(room.structure).sendTo((ServerPlayer) player);
+        } else if (room == null && actualDimensionalStructure != null) {
+            // Player left dimensional dungeon
+            actualDimensionalStructure = null;
+            new StructureNameSyncMessage("").sendTo((ServerPlayer) player);
         }
     }
 
@@ -62,6 +66,7 @@ public class DetectStructure implements TickEvent.Player {
             return;
         }
 
+        ResourceKey<Structure> previousStructure = actualStructure;
         actualStructure = null;
 
         ChunkPos playerChunkPos = new ChunkPos((int) x >> 4, (int) z >> 4);
@@ -81,6 +86,11 @@ public class DetectStructure implements TickEvent.Player {
                 new StructureNameSyncMessage(structureFound.location().toString()).sendTo((ServerPlayer) player);
                 break;
             }
+        }
+
+        // If we were in a structure but aren't anymore, notify client
+        if (previousStructure != null && actualStructure == null) {
+            new StructureNameSyncMessage("").sendTo((ServerPlayer) player);
         }
     }
 }

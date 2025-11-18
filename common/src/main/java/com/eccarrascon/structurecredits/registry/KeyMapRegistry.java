@@ -11,20 +11,65 @@ import java.util.Set;
 public class KeyMapRegistry {
     private static KeyMapRegistry instance;
 
-    private final KeyMapping deactivateMsgKeyMapping;
+    // Toggle keys for boolean configs
+    private final KeyMapping toggleActiveKeyMapping;
+    private final KeyMapping toggleOnlyOneTimeKeyMapping;
+    private final KeyMapping toggleChatMessageKeyMapping;
+    private final KeyMapping toggleShowCreatorKeyMapping;
+    private final KeyMapping toggleContinuousDisplayKeyMapping;
+    private final KeyMapping toggleRequireDifferentStructureKeyMapping;
+
+    // Action keys
     private final KeyMapping showAgainMsgKeyMapping;
     private final KeyMapping dontShowMsgKeyMapping;
 
     private static final String CATEGORY_KEY = "category.structurecredits.keys";
 
     private KeyMapRegistry() {
-        deactivateMsgKeyMapping = new KeyMapping(
-                "key.structurecredits.deactivate_key",
+        // Toggle keys for boolean configs
+        toggleActiveKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_active",
                 InputConstants.Type.KEYSYM,
                 -1,
                 CATEGORY_KEY
         );
 
+        toggleOnlyOneTimeKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_only_one_time",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        toggleChatMessageKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_chat_message",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        toggleShowCreatorKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_show_creator",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        toggleContinuousDisplayKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_continuous_display",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        toggleRequireDifferentStructureKeyMapping = new KeyMapping(
+                "key.structurecredits.toggle_require_different",
+                InputConstants.Type.KEYSYM,
+                -1,
+                CATEGORY_KEY
+        );
+
+        // Action keys
         showAgainMsgKeyMapping = new KeyMapping(
                 "key.structurecredits.show_again_key",
                 InputConstants.Type.KEYSYM,
@@ -47,8 +92,28 @@ public class KeyMapRegistry {
         return instance;
     }
 
-    public KeyMapping getDeactivateMsgKeyMapping() {
-        return deactivateMsgKeyMapping;
+    public KeyMapping getToggleActiveKeyMapping() {
+        return toggleActiveKeyMapping;
+    }
+
+    public KeyMapping getToggleOnlyOneTimeKeyMapping() {
+        return toggleOnlyOneTimeKeyMapping;
+    }
+
+    public KeyMapping getToggleChatMessageKeyMapping() {
+        return toggleChatMessageKeyMapping;
+    }
+
+    public KeyMapping getToggleShowCreatorKeyMapping() {
+        return toggleShowCreatorKeyMapping;
+    }
+
+    public KeyMapping getToggleContinuousDisplayKeyMapping() {
+        return toggleContinuousDisplayKeyMapping;
+    }
+
+    public KeyMapping getToggleRequireDifferentStructureKeyMapping() {
+        return toggleRequireDifferentStructureKeyMapping;
     }
 
     public KeyMapping getShowAgainMsgKeyMapping() {
@@ -60,6 +125,15 @@ public class KeyMapRegistry {
     }
 
     public Set<KeyMapping> getKeys() {
-        return Set.of(deactivateMsgKeyMapping, showAgainMsgKeyMapping, dontShowMsgKeyMapping);
+        return Set.of(
+                toggleActiveKeyMapping,
+                toggleOnlyOneTimeKeyMapping,
+                toggleChatMessageKeyMapping,
+                toggleShowCreatorKeyMapping,
+                toggleContinuousDisplayKeyMapping,
+                toggleRequireDifferentStructureKeyMapping,
+                showAgainMsgKeyMapping,
+                dontShowMsgKeyMapping
+        );
     }
 }
