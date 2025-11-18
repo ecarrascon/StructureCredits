@@ -11,22 +11,19 @@ public class ConfigData {
     private boolean chatMessage = false;
     private boolean showCreator = true;
 
-    // Eequire visiting different structure before showing same structure again
+    // Require visiting different structure before showing same structure again
     private boolean requireDifferentStructure = true;
-
-    // Continuous display
     private boolean continuousDisplay = false;
+    private boolean autoCalculateDuration = true;
 
-    // Display appearance
-    private float textSize = 1.0f; // Scale multiplier for text size
-    private int labelColor = 0xAAAAAA; // Color for "Welcome to:" and "By:" (light gray)
-    private int nameColor = 0xFFFFFF; // Color for structure and mod names (white)
+    private float textSize = 1.0f;
+    private int labelColor = 0xAAAAAA;
+    private int nameColor = 0xFFFFFF;
+    private int displayDuration = 60;
 
-    // Display positioning and duration
-    private int displayDuration = 60; // ticks (3 seconds)
     private String displayPosition = "BOTTOM_CENTER"; // TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
-    private int displayOffsetX = 10; // pixels from edge
-    private int displayOffsetY = 10; // pixels from edge
+    private int displayOffsetX = 0;
+    private int displayOffsetY = 40;
 
     private Map<String, String> customStructureName = new HashMap<>() {{
         put("minecraft:swamp_hut", "a_cat:cat_hut");
@@ -84,6 +81,14 @@ public class ConfigData {
 
     public void setContinuousDisplay(boolean continuousDisplay) {
         this.continuousDisplay = continuousDisplay;
+    }
+
+    public boolean isAutoCalculateDuration() {
+        return autoCalculateDuration;
+    }
+
+    public void setAutoCalculateDuration(boolean autoCalculateDuration) {
+        this.autoCalculateDuration = autoCalculateDuration;
     }
 
     public float getTextSize() {

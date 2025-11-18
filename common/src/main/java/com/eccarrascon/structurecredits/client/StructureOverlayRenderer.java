@@ -13,7 +13,9 @@ public class StructureOverlayRenderer {
     private static boolean showCreator = true;
     private static int displayTimer = 0;
     private static int fadeTimer = 0;
-    private static final int FADE_DURATION = 10; // ticks for fade in/out
+    private static final int FADE_DURATION = 10;
+    private static final float WORDS_PER_SECOND = 4.0f;
+    private static final int MIN_DISPLAY_TICKS = 40;
 
     public static void setMessage(String structure, String mod, boolean withCreator) {
         structureName = structure;
@@ -21,13 +23,35 @@ public class StructureOverlayRenderer {
         showCreator = withCreator;
 
         if (!CONFIG_VALUES.isContinuousDisplay()) {
-            displayTimer = CONFIG_VALUES.getDisplayDuration();
+            if (CONFIG_VALUES.isAutoCalculateDuration()) {
+                displayTimer = calculateReadingDuration(structure, mod, withCreator);
+            } else {
+                displayTimer = CONFIG_VALUES.getDisplayDuration();
+            }
             fadeTimer = 0;
         } else {
-            // In continuous mode, always show at full opacity
             displayTimer = Integer.MAX_VALUE;
             fadeTimer = FADE_DURATION;
         }
+    }
+
+    private static int calculateReadingDuration(String structure, String mod, boolean withCreator) {
+        int wordCount = countWords(structure);
+        if (withCreator) {
+            wordCount += countWords(mod) + 4;
+        } else {
+            wordCount += 2;
+        }
+
+        int calculatedTicks = (int) ((wordCount / WORDS_PER_SECOND) * 20);
+        return Math.max(MIN_DISPLAY_TICKS, calculatedTicks);
+    }
+
+    private static int countWords(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return 0;
+        }
+        return text.trim().split("\\s+").length;
     }
 
     public static void clearMessage() {
@@ -43,13 +67,11 @@ public class StructureOverlayRenderer {
         }
 
         if (CONFIG_VALUES.isContinuousDisplay()) {
-            // In continuous mode, keep at full opacity
             fadeTimer = FADE_DURATION;
             displayTimer = Integer.MAX_VALUE;
             return;
         }
 
-        // Normal mode with fade in/out
         if (displayTimer > 0) {
             displayTimer--;
             if (fadeTimer < FADE_DURATION) {
@@ -57,7 +79,6 @@ public class StructureOverlayRenderer {
             }
         }
 
-        // When display timer runs out, start fading out
         if (displayTimer == 0 && fadeTimer > 0) {
             fadeTimer--;
             if (fadeTimer == 0) {
@@ -96,39 +117,30 @@ public class StructureOverlayRenderer {
         int screenWidth = (int) (mc.getWindow().getGuiScaledWidth() / scale);
         int screenHeight = (int) (mc.getWindow().getGuiScaledHeight() / scale);
 
-        // Calculate base position
         int x = calculateX(screenWidth, totalWidth);
         int y = calculateY(screenHeight, messageHeight);
 
-        // Calculate alpha for fade effect
         float alpha = calculateAlpha();
 
-        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        // Get colors from config
         int labelColor = CONFIG_VALUES.getLabelColor();
         int nameColor = CONFIG_VALUES.getNameColor();
 
-        // Apply alpha to colors
         int labelColorWithAlpha = applyAlpha(labelColor, alpha);
         int nameColorWithAlpha = applyAlpha(nameColor, alpha);
 
-        // Draw "Welcome to: "
         guiGraphics.drawString(mc.font, label1, x, y, labelColorWithAlpha, true);
         x += label1Width;
 
-        // Draw structure name
         guiGraphics.drawString(mc.font, structureName, x, y, nameColorWithAlpha, true);
         x += structureWidth;
 
         if (showCreator) {
-            // Draw " - By: "
             guiGraphics.drawString(mc.font, label2, x, y, labelColorWithAlpha, true);
             x += label2Width;
 
-            // Draw mod name
             guiGraphics.drawString(mc.font, modName, x, y, nameColorWithAlpha, true);
         }
 
@@ -168,21 +180,17 @@ public class StructureOverlayRenderer {
 
     private static float calculateAlpha() {
         if (CONFIG_VALUES.isContinuousDisplay()) {
-            // Always full opacity in continuous mode
             return 1.0f;
         }
 
-        // Fade in phase (first FADE_DURATION ticks)
         if (displayTimer > FADE_DURATION) {
             return Math.min(1.0f, fadeTimer / (float) FADE_DURATION);
         }
 
-        // Full display phase
         if (displayTimer > 0 && fadeTimer >= FADE_DURATION) {
             return 1.0f;
         }
 
-        // Fade out phase (when displayTimer hits 0)
         if (displayTimer == 0) {
             return Math.max(0.0f, fadeTimer / (float) FADE_DURATION);
         }

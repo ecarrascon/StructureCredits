@@ -16,7 +16,7 @@ import static com.eccarrascon.structurecredits.StructureCreditsClient.CONFIG_VAL
 public class DisplayNameClient implements ClientTickEvent.Client {
     private static String lastStructure = "haley:you_found_it!";
     private static String currentStructure = null;
-    private static String previousStructure = null; // Track previous structure for requireDifferentStructure
+    private static String previousStructure = null;
 
     @Override
     public void tick(Minecraft instance) {
@@ -54,18 +54,15 @@ public class DisplayNameClient implements ClientTickEvent.Client {
             addCurrentStructureToDontShow();
         }
 
-        // Tick the overlay renderer
         if (!CONFIG_VALUES.isChatMessage()) {
             StructureOverlayRenderer.tick();
         }
     }
 
     public static void updateStructureName(String structureName, boolean isPacket) {
-        // Handle structure entry/exit
         if (isPacket) {
             if (structureName == null || structureName.isEmpty()) {
-                // Player left structure
-                previousStructure = currentStructure; // Store for requireDifferentStructure
+                previousStructure = currentStructure;
                 currentStructure = null;
                 if (!CONFIG_VALUES.isChatMessage()) {
                     StructureOverlayRenderer.clearMessage();
@@ -73,23 +70,18 @@ public class DisplayNameClient implements ClientTickEvent.Client {
                 return;
             }
 
-            // Player entered structure
             if (Objects.equals(currentStructure, structureName)) {
-                // Same structure, already displaying if continuous mode
                 return;
             }
 
-            // Check if we should show the message based on requireDifferentStructure
             if (CONFIG_VALUES.isRequireDifferentStructure() && !CONFIG_VALUES.isOnlyOneTime()) {
-                // Only show if we came from a different structure
                 if (Objects.equals(previousStructure, structureName)) {
-                    // Coming back to the same structure without visiting another
                     currentStructure = structureName;
                     return;
                 }
             }
 
-            previousStructure = currentStructure; // Update previous before changing current
+            previousStructure = currentStructure;
             currentStructure = structureName;
         }
 
@@ -109,12 +101,10 @@ public class DisplayNameClient implements ClientTickEvent.Client {
 
             if (!isPacket || (CONFIG_VALUES.getDontShowAll().stream().noneMatch(structureName::startsWith) && !CONFIG_VALUES.getDontShow().contains(structureName))) {
                 if (CONFIG_VALUES.isChatMessage()) {
-                    // Use chat message with color codes
                     String messageKey = showCreator ? "text.structurecredits.message" : "text.structurecredits.message_no_creator";
                     Component messageComponent = Component.translatable(messageKey, structureNameFormatted, modName);
                     Minecraft.getInstance().player.displayClientMessage(messageComponent, false);
                 } else {
-                    // Use custom overlay with separate colors
                     StructureOverlayRenderer.setMessage(structureNameFormatted, modName, showCreator);
                 }
 

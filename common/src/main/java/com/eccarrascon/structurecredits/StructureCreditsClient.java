@@ -19,7 +19,6 @@ public class StructureCreditsClient {
     public static LibConfig<ConfigData> CONFIG;
     public static ConfigData CONFIG_VALUES;
 
-
     public static void onInitializeClient() {
         CONFIG = new LibConfig<>(
                 "structurecredits-config.json",
@@ -34,7 +33,6 @@ public class StructureCreditsClient {
 
         KeyMapRegistry keyMapRegistry = KeyMapRegistry.getInstance();
 
-        // Register all keybindings
         KeyMappingRegistry.register(keyMapRegistry.getToggleActiveKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getToggleOnlyOneTimeKeyMapping());
         KeyMappingRegistry.register(keyMapRegistry.getToggleChatMessageKeyMapping());
@@ -46,7 +44,6 @@ public class StructureCreditsClient {
 
         ClientTickEvent.CLIENT_POST.register(new DisplayNameClient());
 
-        // Register HUD overlay renderer
         ClientGuiEvent.RENDER_HUD.register((guiGraphics, partialTick) -> {
             if (!CONFIG_VALUES.isChatMessage()) {
                 StructureOverlayRenderer.render(guiGraphics, partialTick);

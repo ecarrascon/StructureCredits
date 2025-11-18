@@ -16,6 +16,5 @@ public class StructureCredits {
     public static void init() {
         StructureCreditsNet.initialize();
         TickEvent.PLAYER_POST.register(new DetectStructure());
-
     }
 }

@@ -11,22 +11,18 @@ import java.util.Set;
 public class KeyMapRegistry {
     private static KeyMapRegistry instance;
 
-    // Toggle keys for boolean configs
     private final KeyMapping toggleActiveKeyMapping;
     private final KeyMapping toggleOnlyOneTimeKeyMapping;
     private final KeyMapping toggleChatMessageKeyMapping;
     private final KeyMapping toggleShowCreatorKeyMapping;
     private final KeyMapping toggleContinuousDisplayKeyMapping;
     private final KeyMapping toggleRequireDifferentStructureKeyMapping;
-
-    // Action keys
     private final KeyMapping showAgainMsgKeyMapping;
     private final KeyMapping dontShowMsgKeyMapping;
 
     private static final String CATEGORY_KEY = "category.structurecredits.keys";
 
     private KeyMapRegistry() {
-        // Toggle keys for boolean configs
         toggleActiveKeyMapping = new KeyMapping(
                 "key.structurecredits.toggle_active",
                 InputConstants.Type.KEYSYM,
@@ -69,7 +65,6 @@ public class KeyMapRegistry {
                 CATEGORY_KEY
         );
 
-        // Action keys
         showAgainMsgKeyMapping = new KeyMapping(
                 "key.structurecredits.show_again_key",
                 InputConstants.Type.KEYSYM,

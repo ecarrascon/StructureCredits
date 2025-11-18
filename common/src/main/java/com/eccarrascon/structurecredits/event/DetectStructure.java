@@ -55,7 +55,6 @@ public class DetectStructure implements TickEvent.Player {
             actualDimensionalStructure = room.structure;
             new StructureNameSyncMessage(room.structure).sendTo((ServerPlayer) player);
         } else if (room == null && actualDimensionalStructure != null) {
-            // Player left dimensional dungeon
             actualDimensionalStructure = null;
             new StructureNameSyncMessage("").sendTo((ServerPlayer) player);
         }
@@ -88,7 +87,6 @@ public class DetectStructure implements TickEvent.Player {
             }
         }
 
-        // If we were in a structure but aren't anymore, notify client
         if (previousStructure != null && actualStructure == null) {
             new StructureNameSyncMessage("").sendTo((ServerPlayer) player);
         }

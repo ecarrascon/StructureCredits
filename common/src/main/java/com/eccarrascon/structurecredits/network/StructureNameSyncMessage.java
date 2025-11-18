@@ -27,12 +27,8 @@ public class StructureNameSyncMessage extends BaseS2CMessage {
         buf.writeUtf(structureName);
     }
 
-
-
     @Override
     public void handle(NetworkManager.PacketContext context) {
         context.queue(() -> DisplayNameClient.updateStructureName(structureName, true));
     }
-
-
 }
